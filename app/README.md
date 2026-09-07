@@ -2,6 +2,10 @@
 
 Aplikasi web (PWA) untuk belajar Bahasa Isyarat Indonesia (SIBI) dengan pengenalan gestur real-time via kamera. Dibuat untuk capstone *Proyek Sistem Aplikasi* UPNVJ.
 
+## Live
+
+**https://capstone-sign-language.vercel.app** (Vercel, auto-deploy dari branch `main`, root directory `app`)
+
 ## Stack
 
 - React 19 + Vite 8
