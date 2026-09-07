@@ -23,6 +23,7 @@ import { loadModel, predictLandmarks } from '../modules/recognition/mlp'
 import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../modules/recognition/camera'
 import { analyze } from '../modules/recognition/geometry'
 import { recordSuccess, recordFailure } from '../modules/progress'
+import { recordCorrect } from '../modules/gamification'
 
 const STATIC_LETTERS = ABJAD_SIBI.filter((g) => g.kategori === 'abjad')
 const HOLD_MS = 5000 // lulus: tahan gestur benar 5 detik
@@ -241,6 +242,7 @@ export default function QuizMode() {
     // T8: catat progres (kuis = 1 percobaan, benar & salah dicatat)
     if (success) {
       recordSuccess(current.label)
+      recordCorrect() // T9-extra: XP & streak harian
     } else {
       recordFailure(current.label)
     }

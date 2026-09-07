@@ -14,6 +14,7 @@ import {
 import HeroArt from './components/HeroArt'
 import GestureDetailModal from './components/GestureDetailModal'
 import ProgressPage from './components/ProgressPage'
+import GameChips from './components/GameChips'
 import './App.css'
 
 // PracticePage dimuat lazy: @mediapipe/tasks-vision (~500 kB) hanya diunduh
@@ -70,6 +71,7 @@ function App() {
             </button>
           ))}
         </nav>
+        <GameChips />
       </header>
 
       <main>

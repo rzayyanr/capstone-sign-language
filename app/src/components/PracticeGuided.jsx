@@ -22,6 +22,7 @@ import { loadModel, predictLandmarks } from '../modules/recognition/mlp'
 import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../modules/recognition/camera'
 import { analyze } from '../modules/recognition/geometry'
 import { recordSuccess } from '../modules/progress'
+import { recordCorrect } from '../modules/gamification'
 
 const STATIC_LETTERS = ABJAD_SIBI.filter((g) => g.kategori === 'abjad')
 const HOLD_MS = 5000 // syarat lulus: gestur benar ditahan 5 detik penuh (waktu nyata)
@@ -196,6 +197,7 @@ export default function PracticeGuided() {
           // T8: catat keberhasilan (hanya huruf abjad)
           if (gesture.kategori === 'abjad') {
             recordSuccess(gesture.label)
+            recordCorrect()
           }
         } else {
           // bulatkan ke 100ms: nilai sama antar frame → React bailout (tak re-render)

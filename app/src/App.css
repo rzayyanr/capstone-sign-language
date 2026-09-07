@@ -18,6 +18,7 @@
   gap: var(--space-md);
   padding: var(--space-sm) 0 var(--space-lg);
   flex-wrap: wrap;
+  position: relative;
 }
 
 .logo {
@@ -74,6 +75,54 @@
   background: var(--primary);
   color: #fff;
   box-shadow: 0 3px 0 var(--primary-deep);
+}
+
+/* ---------- Chip streak & XP (gaya Duolingo) ---------- */
+.game-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border-radius: var(--radius-pill);
+  padding: 5px 12px 5px 6px;
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--ink);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.chip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.chip-icon-streak {
+  background: #f97316; /* oranye api */
+  box-shadow: 0 2px 0 #c2570a;
+}
+
+.chip-icon-xp {
+  background: #8b5cf6; /* ungu petir XP (kontras dgn teal) */
+  box-shadow: 0 2px 0 #6d3fd4;
+}
+
+.chip-value {
+  line-height: 1;
 }
 
 /* ---------- Hero ---------- */
@@ -797,7 +846,18 @@
     gap: var(--space-sm);
   }
 
+  /* Logo kiri + chip kanan di baris pertama; nav mengisi baris kedua */
+  .logo {
+    order: 1;
+  }
+  .game-chips {
+    order: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   .app-nav {
+    order: 2;
     width: 100%;
     justify-content: flex-start;
     overflow-x: auto;
