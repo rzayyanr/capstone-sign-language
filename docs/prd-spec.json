@@ -1,0 +1,106 @@
+{
+  "page": {
+    "size": "A4",
+    "margins_mm": {"top": 20, "bottom": 20, "left": 25, "right": 25}
+  },
+  "styles": [
+    {"name": "Normal", "font": "Calibri", "size": 11},
+    {"name": "Heading 1", "font": "Calibri", "size": 16, "bold": true, "color": "1F3864"},
+    {"name": "Heading 2", "font": "Calibri", "size": 13, "bold": true, "color": "1F3864"},
+    {"name": "Heading 3", "font": "Calibri", "size": 12, "bold": true, "color": "2E74B5"}
+  ],
+  "blocks": [
+    {"type": "heading", "level": 1, "text": "Product Requirements Document (PRD)"},
+    {"type": "paragraph", "text": "Aplikasi Belajar SIBI dengan Pengenalan Gestur Real-time"},
+    {"type": "paragraph", "text": "Mata Kuliah: Proyek Sistem Aplikasi (Capstone Project) | Semester Ganjil 2026/2027"},
+    {"type": "paragraph", "text": "Dokumen ini adalah spesifikasi produk (PRD) untuk aplikasi web belajar bahasa isyarat SIBI dengan pengenalan gestur real-time. PRD ini menjadi acuan pengembangan, pengujian, dan penilaian proyek capstone."},
+
+    {"type": "heading", "level": 2, "text": "1. Problem Statement"},
+    {"type": "paragraph", "text": "Banyak orang dengar (pendengar) di Indonesia ingin bisa berkomunikasi dengan teman atau kolega Tuli, tetapi tidak tahu cara belajar bahasa isyarat yang benar, mudah, dan terstruktur. Kelas bahasa isyarat formal jarang dan mahal; sumber online tidak terstruktur dan tidak memberi umpan balik. Akibatnya, calon pembelajar berhenti sebelum bisa, dan jurang komunikasi antara komunitas dengar dan Tuli tetap lebar. Tersedia sistem isyarat resmi (SIBI) yang terdokumentasi baik, tetapi tidak ada alat belajar interaktif yang mengoreksi gerakan pengguna secara langsung."},
+
+    {"type": "heading", "level": 2, "text": "2. Solution"},
+    {"type": "paragraph", "text": "Aplikasi web (PWA) untuk belajar SIBI dengan pengenalan gestur real-time melalui kamera. Pengguna melihat panduan gestur (gambar + teks), mencoba di depan kamera, dan aplikasi menilai benar/salah plus memberi koreksi. Aplikasi punya alur belajar terstruktur, kuis latihan, dan pelacakan progres lokal. Target pengguna: orang dengar yang ingin belajar SIBI untuk berkomunikasi dengan teman Tuli. Bahasa antarmuka: Bahasa Indonesia. BISINDO direncanakan sebagai pengembangan lanjutan (stretch goal), bukan bagian MVP."},
+
+    {"type": "heading", "level": 2, "text": "3. User Stories"},
+    {"type": "numbered_list", "items": [
+      "Sebagai pembelajar, saya ingin melihat daftar semua huruf SIBI dalam grid, sehingga saya tahu apa saja yang bisa dipelajari.",
+      "Sebagai pembelajar, saya ingin membuka halaman satu huruf yang berisi panduan (gambar + teks langkah), sehingga saya tahu cara membentuknya.",
+      "Sebagai pembelajar, saya ingin mengikuti alur belajar berurutan (A-Z), sehingga saya punya struktur dan tidak bingung mulai dari mana.",
+      "Sebagai pembelajar, saya ingin bisa melompat ke huruf mana pun dari grid, sehingga saya bisa mengulang yang sulit atau belajar yang saya mau.",
+      "Sebagai pembelajar, saya ingin mencoba membentuk huruf di depan kamera dan langsung dinilai benar/salah, sehingga saya tahu apakah gestur saya tepat.",
+      "Sebagai pembelajar, ketika gestur saya salah, saya ingin sistem memberi tahu huruf apa yang terdeteksi, sehingga saya paham kesalahan saya.",
+      "Sebagai pembelajar, ketika gestur saya salah, saya ingin melihat saran perbaikan geometris (misal \"luruskan jari telunjuk\", \"rapatkan jari\"), sehingga saya bisa memperbaiki pose dengan spesifik.",
+      "Sebagai pembelajar, ketika gestur saya salah, saya ingin panduan (gambar) muncul lagi di samping kamera, sehingga saya bisa membandingkan dan mencoba lagi.",
+      "Sebagai pembelajar, saya ingin gestur dianggap berhasil hanya setelah stabil beberapa saat (bukan sekali tebak), sehingga penilaian tidak mengecewakan karena tangan goyang.",
+      "Sebagai pembelajar, setelah berhasil, saya ingin lanjut otomatis ke huruf/kata berikutnya dalam alur, sehingga belajar mengalir.",
+      "Sebagai pembelajar, saya ingin melihat progres penguasaan saya (huruf mana yang sudah dikuasai, yang masih lemah), sehingga saya tahu fokus belajar.",
+      "Sebagai pembelajar, sebuah huruf dianggap \"dikuasai\" setelah saya benar beberapa kali berturut-turut, sehingga penguasaan benar-benar teruji, bukan keberuntungan.",
+      "Sebagai pembelajar, saya ingin berlatih lewat kuis (sistem memberi perintah \"tunjukkan huruf X\", saya membentuknya, dinilai), sehingga saya menguji ingatan saya.",
+      "Sebagai pembelajar, di akhir kuis saya ingin melihat skor dan daftar huruf yang salah, sehingga saya tahu apa yang perlu diulang.",
+      "Sebagai pembelajar, saya ingin mode latihan bebas (pilih huruf, langsung dinilai, tanpa skor), sehingga saya bisa berlatih santai.",
+      "Sebagai pembelajar, saya ingin melihat dan belajar kata-kata SIBI (15-20 kata dasar), sehingga saya bisa berkomunikasi lebih dari sekadar mengeja.",
+      "Sebagai pembelajar, saya ingin aplikasi bisa dipakai tanpa kamera (melihat materi/panduan), sehingga saya bisa belajar pasif saat tidak ada kamera.",
+      "Sebagai pembelajar, saya ingin kamera hanya aktif saat sesi latihan dengan indikator jelas, sehingga privasi saya terjaga.",
+      "Sebagai pembelajar, saya ingin progres saya tersimpan di browser (localStorage) dan tetap ada saat aplikasi ditutup, sehingga saya tidak kehilangan kemajuan.",
+      "Sebagai pembelajar, saya ingin aplikasi bisa dibuka di HP dan laptop lewat browser, sehingga saya bisa belajar di mana saja.",
+      "Sebagai pembelajar, saya ingin antarmuka dalam Bahasa Indonesia, sehingga mudah dipahami.",
+      "Sebagai pembelajar, saya ingin aplikasi memberi tahu kalau kamera tidak tersedia/izin ditolak, dengan opsi lanjut tanpa kamera, sehingga aplikasi tetap berguna.",
+      "Sebagai dosen/penguji, saya ingin demo bisa berjalan tanpa kamera (mode uji dari file gambar / video cadangan), sehingga penilaian tidak terganggu masalah teknis kamera.",
+      "Sebagai developer, saya ingin arsitektur memisahkan pipeline pengenalan dari logika produk dan konten, sehingga sistem isyarat lain (BISINDO) bisa ditambahkan tanpa rombak.",
+      "Sebagai developer, saya ingin model pengenalan dijalankan sepenuhnya di browser (tanpa server), sehingga privasi terjaga dan deployment sederhana."
+    ]},
+
+    {"type": "heading", "level": 2, "text": "4. Implementation Decisions"},
+    {"type": "numbered_list", "items": [
+      "Platform: Web mobile-first PWA; satu kode jalan di laptop dan HP via browser; bisa \"Add to Home Screen\".",
+      "Pipeline pengenalan: sepenuhnya client-side. MediaPipe untuk deteksi dan landmark satu tangan (21 titik); model klasifikasi ringan MLP; dijalankan via TensorFlow.js. Tanpa server ML.",
+      "Stack: React + Vite.",
+      "Bahasa target dan sumber konten: SIBI; konten dan gambar panduan bersumber dari Kamus SIBI resmi Kemendikbud.",
+      "Scope MVP: 24 abjad statis SIBI (A-I, K-Y) + 15-20 kata dasar statis. Huruf J dan Z (dinamis) tidak masuk MVP.",
+      "Katalog gestur data-driven: setiap gestur adalah data {id, label, sistem [SIBI], jumlah_tangan: 1, gambar_panduan, teks_langkah, aturan_geometris?}. Memungkinkan BISINDO (2 tangan) ditambahkan sebagai sistem baru.",
+      "Arsitektur modular: modul pengenalan (deteksi + klasifikasi) terisolasi; modul logika produk (alur belajar, kuis, mastery, progres) tidak bergantung langsung pada kamera; modul konten/katalog gestur data-driven.",
+      "Feedback geometris: aturan berbasis landmark per huruf (misal \"jari telunjuk lurus\", \"jari rapat\") untuk abjad; dipakai untuk saran perbaikan.",
+      "Penilaian stabil: prediksi dianggap benar jika kelas yang sama muncul N frame berturut-turut dengan skor keyakinan di atas ambang.",
+      "Mastery: huruf dianggap dikuasai setelah benar 3x berturut-turut.",
+      "Progres: localStorage di browser, tanpa login di MVP.",
+      "Mode uji dari file / cadangan demo: pengguna/penguji bisa memuat gambar untuk dinilai (tanpa kamera); video demo cadangan disiapkan.",
+      "Deployment: Vercel atau Netlify (HTTPS wajib untuk akses kamera).",
+      "Dataset: prototyping dengan dataset publik ASL (satu tangan, mirip SIBI); dataset final direkam sendiri (video ke frame, +/-100 frame/gestur, variasi sudut/cahaya), disimpan mentah di Google Drive, CSV landmark di repo.",
+      "Pelatihan model: Python (Keras/TensorFlow) offline; Google Colab cadangan.",
+      "Arsitektur multi-sistem: BISINDO (2 tangan) sebagai stretch goal ber-gerbang, bukan bagian spec ini."
+    ]},
+
+    {"type": "heading", "level": 2, "text": "5. Testing Decisions"},
+    {"type": "paragraph", "text": "Prinsip: uji perilaku eksternal, bukan detail implementasi. Yang baik: memastikan logika produk benar tanpa bergantung pada kamera/model nyata."},
+    {"type": "bullet_list", "items": [
+      "Modul logika produk (alur belajar, kuis, mastery, progres): diuji dengan landmark sintetis atau input file yang sudah diketahui. Misal: memberi landmark yang benar untuk huruf A menghasilkan status benar; yang salah menghasilkan salah; setelah 3x benar mastery tercapai.",
+      "Aturan feedback geometris: diuji per huruf dengan landmark sintetis yang sengaja salah pada satu aspek (misal jari bengkok), sistem memberi saran yang tepat.",
+      "Penilaian stabil (N-frame): diuji dengan urutan prediksi sintetis (stabil vs berubah-ubah), sistem hanya mengunci saat stabil.",
+      "Model MLP: dievaluasi offline dengan confusion matrix dan akurasi per huruf; target rata-rata >=85% pada data uji. Uji di sisi pipeline, terpisah dari UI.",
+      "Integrasi browser (MediaPipe + TF.js): diuji manual dengan kamera + mode file; karena MediaPipe butuh browser, pengujian otomatis terbatas; prioritas pada uji manual terstruktur (teman non-coding sebagai QA).",
+      "Tidak ada prior art karena repo greenfield; seam pengujian utama adalah modul logika produk yang murni (tanpa DOM/kamera), sehingga mudah diuji."
+    ]},
+
+    {"type": "heading", "level": 2, "text": "6. Out of Scope"},
+    {"type": "bullet_list", "items": [
+      "Huruf SIBI J dan Z (dinamis) dan semua gestur dinamis (fase lanjutan opsional).",
+      "BISINDO (stretch goal ber-gerbang; butuh validasi komunitas dan waktu; bukan janji MVP).",
+      "Login, akun, sinkronisasi progres antar perangkat (backend).",
+      "Mode kalimat / percakapan.",
+      "Gamifikasi lanjutan (streak, leaderboard, poin).",
+      "Aplikasi mobile native (Android/iOS) dan publish ke app store.",
+      "Dukungan dua tangan untuk SIBI/BISINDO penuh di MVP.",
+      "Konten video panduan per gestur (gambar + teks cukup di MVP).",
+      "Pengenalan ekspresi wajah / bahasa tubuh (fokus ke tangan).",
+      "Penerjemahan isyarat ke teks secara bebas (hanya pengenalan kosakata terbatas)."
+    ]},
+
+    {"type": "heading", "level": 2, "text": "7. Further Notes"},
+    {"type": "bullet_list", "items": [
+      "Target selesai: MVP kelar di pertemuan 12 (1 bulan sebelum akhir); pertemuan 13-16 untuk QA, laporan, presentasi.",
+      "Rencana cadangan: jika telat, kata jadi fase 2 (24 abjad tetap MVP inti).",
+      "Akses komunitas Tuli untuk validasi bersifat best effort, dibutuhkan hanya untuk stretch BISINDO.",
+      "Kejujuran akademik: klaim akurasi harus diukur sungguhan dengan confusion matrix; target >=85% dinyatakan dari awal."
+    ]}
+  ]
+}
