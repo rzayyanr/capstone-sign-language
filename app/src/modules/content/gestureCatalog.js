@@ -1,35 +1,657 @@
 import { SISTEM } from './types'
 
-// Katalog gestur data-driven (ADR-0005).
-// Source konten: Kamus SIBI resmi Kemendikbud (pmpk.kemdikbud.go.id/sibi).
-// MVP: 24 abjad statis (A-I, K-Y) + kata dasar. J & Z (dinamis) di luar scope.
-// Contoh sample kecil untuk fondasi; daftar lengkap diisi pada fase riset (T2).
+// Sumber kebenaran: Kamus SIBI Resmi Kemendikbud & Fingerspelling Standard (ADR-0002)
 
-export const ABJAD_STATIS = [
-  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-  'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-  'U', 'V', 'W', 'X', 'Y',
-]
-
-const BUILTIN_GESTURES = [
-  ...ABJAD_STATIS.map((huruf) => ({
-    id: `sibi-${huruf.toLowerCase()}`,
-    label: huruf,
-    sistem: SISTEM.SIBI,
-    jumlahTangan: 1,
-    gambar: `/gambar/${huruf.toLowerCase()}.png`,
-    teksLangkah: `Bentuk huruf ${huruf} sesuai panduan Kamus SIBI.`,
-  })),
-  // Contoh kata dasar (daftar final diisi pada T2/riset Kamus SIBI)
-  { id: 'sibi-maaf', label: 'maaf', sistem: SISTEM.SIBI, jumlahTangan: 1, gambar: '/gambar/maaf.png', teksLangkah: 'Kepalkan tangan, gerakkan ke depan, geser ke kanan.' },
-]
-
-/** Ambil semua gestur untuk satu sistem isyarat. */
-export function getGesturesBySystem(sistem) {
-  return BUILTIN_GESTURES.filter((g) => g.sistem === sistem)
+export const SUMBER_KONTEN = {
+  nama: 'Kamus Sistem Isyarat Bahasa Indonesia (SIBI)',
+  penerbit: 'Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi RI',
+  url: 'https://pmpk.kemdikbud.go.id/sibi/',
 }
 
-/** Ambil satu gestur berdasarkan id. */
+/**
+ * 24 Abjad Statis SIBI (A-I, K-Y)
+ * Catatan: Huruf J & Z tidak masuk MVP karena merupakan gestur dinamis (bergerak).
+ */
+export const ABJAD_SIBI = [
+  {
+    id: 'sibi-a',
+    label: 'A',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/A.png',
+    ringkasan: 'Kepalan tangan menghadap depan dengan ibu jari tegak di samping telunjuk.',
+    teksLangkah: [
+      'Bentuk tangan kanan menjadi kepalan menghadap ke depan.',
+      'Rapatkan keempat jari (telunjuk sampai kelingking) ke arah telapak.',
+      'Posisikan ibu jari tegak lurus menempel di sisi luar jari telunjuk.',
+    ],
+    tipsGeometri: 'Pastikan ibu jari tidak menyilang di depan jari-jari lain.',
+  },
+  {
+    id: 'sibi-b',
+    label: 'B',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/B.png',
+    ringkasan: 'Empat jari tegak lurus rapat ke atas, ibu jari melipat di depan telapak.',
+    teksLangkah: [
+      'Buka telapak tangan kanan menghadap ke depan.',
+      'Luruskan dan rapatkan keempat jari (telunjuk, tengah, manis, kelingking) ke atas.',
+      'Lipat ibu jari melintang di bagian depan telapak tangan.',
+    ],
+    tipsGeometri: 'Keempat jari harus rapat dan tegak lurus, tidak renggang.',
+  },
+  {
+    id: 'sibi-c',
+    label: 'C',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/C.png',
+    ringkasan: 'Seluruh jari dan ibu jari melengkung membentuk huruf C dari samping.',
+    teksLangkah: [
+      'Buka tangan kanan menghadap ke samping kiri.',
+      'Lengkungkan keempat jari ke arah bawah secara bersamaan.',
+      'Lengkungkan ibu jari ke arah atas hingga membentuk lengkungan setengah lingkaran mirip huruf C.',
+    ],
+    tipsGeometri: 'Beri jarak antara ujung jari-jari dengan ujung ibu jari.',
+  },
+  {
+    id: 'sibi-d',
+    label: 'D',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/D.png',
+    ringkasan: 'Jari telunjuk tegak lurus ke atas, jari lain melingkar menyentuh ibu jari.',
+    teksLangkah: [
+      'Luruskan jari telunjuk tegak ke atas menghadap depan.',
+      'Lengkungkan jari tengah, manis, dan kelingking ke dalam.',
+      'Sentuhkan ujung ibu jari ke ujung jari tengah sehingga membentuk lingkaran di bawah telunjuk.',
+    ],
+    tipsGeometri: 'Hanya jari telunjuk yang berdiri lurus tegak.',
+  },
+  {
+    id: 'sibi-e',
+    label: 'E',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/E.png',
+    ringkasan: 'Keempat jari ditekuk ke bawah rapat, ibu jari terlipat di bawah ujung jari.',
+    teksLangkah: [
+      'Buka telapak tangan kanan menghadap depan.',
+      'Tekuk keempat jari ke arah bawah hingga ujung jari menyentuh pangkal telapak.',
+      'Tarik ibu jari ke bagian bawah kuku jari-jari yang tertekuk.',
+    ],
+    tipsGeometri: 'Kuku keempat jari bertumpu di atas sisi ibu jari.',
+  },
+  {
+    id: 'sibi-f',
+    label: 'F',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/F.png',
+    ringkasan: 'Ujung telunjuk dan ibu jari bertemu membentuk lingkaran, 3 jari lain tegak.',
+    teksLangkah: [
+      'Sentuhkan ujung jari telunjuk dengan ujung ibu jari membentuk lingkaran kecil.',
+      'Luruskan ketiga jari lainnya (tengah, manis, kelingking) tegak lurus ke atas dan sedikit renggang.',
+      'Arahkan telapak tangan menghadap ke depan.',
+    ],
+    tipsGeometri: 'Kebalikan dari huruf D: di huruf F, tiga jari luar berdiri tegak.',
+  },
+  {
+    id: 'sibi-g',
+    label: 'G',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/G.png',
+    ringkasan: 'Telunjuk dan ibu jari sejajar mengarah ke samping kiri.',
+    teksLangkah: [
+      'Kepalkan jari tengah, manis, dan kelingking ke telapak.',
+      'Luruskan jari telunjuk dan ibu jari secara sejajar mengarah horizontal ke kiri.',
+      'Posisikan telapak tangan menghadap ke arah dada kamu.',
+    ],
+    tipsGeometri: 'Telunjuk dan ibu jari terbuka berjarak sekitar 2-3 cm sejajar.',
+  },
+  {
+    id: 'sibi-h',
+    label: 'H',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/H.png',
+    ringkasan: 'Telunjuk dan jari tengah lurus rapat mengarah ke samping kiri.',
+    teksLangkah: [
+      'Luruskan jari telunjuk dan jari tengah secara rapat mengarah horizontal ke samping kiri.',
+      'Lipat jari manis dan kelingking ke dalam telapak.',
+      'Tutupkan ibu jari di atas jari manis yang terlipat.',
+    ],
+    tipsGeometri: 'Jari telunjuk dan tengah harus lurus dan menempel rapat.',
+  },
+  {
+    id: 'sibi-i',
+    label: 'I',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/I.png',
+    ringkasan: 'Hanya jari kelingking yang tegak lurus ke atas, jari lain mengepal.',
+    teksLangkah: [
+      'Kepalkan jari telunjuk, tengah, manis, dan ibu jari rapat ke telapak.',
+      'Luruskan jari kelingking tegak lurus ke atas menghadap depan.',
+      'Kunci kepalan tangan dengan meletakkan ibu jari di depan jari telunjuk & tengah.',
+    ],
+    tipsGeometri: 'Pastikan hanya kelingking yang berdiri tegak lurus.',
+  },
+  {
+    id: 'sibi-k',
+    label: 'K',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/K.png',
+    ringkasan: 'Telunjuk tegak, jari tengah miring ke depan, ibu jari menopang di antara keduanya.',
+    teksLangkah: [
+      'Luruskan jari telunjuk tegak lurus ke atas.',
+      'Arahkan jari tengah sedikit condong ke depan membentuk sudut.',
+      'Letakkan ujung ibu jari menyentuh ruas tengah jari tengah di antara kedua jari.',
+      'Lipat jari manis dan kelingking ke dalam telapak.',
+    ],
+    tipsGeometri: 'Dari depan terlihat seperti huruf V dengan jempol menyembul di tengah.',
+  },
+  {
+    id: 'sibi-l',
+    label: 'L',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/L.png',
+    ringkasan: 'Telunjuk tegak ke atas dan ibu jari terbuka ke samping membentuk sudut 90 derajat (huruf L).',
+    teksLangkah: [
+      'Luruskan jari telunjuk tegak ke atas.',
+      'Rentangkan ibu jari lurus ke samping membentuk sudut siku-siku (90°).',
+      'Lipat jari tengah, manis, dan kelingking rapat ke telapak tangan.',
+    ],
+    tipsGeometri: 'Bentuk yang dihasilkan menyerupai persis huruf L kapital.',
+  },
+  {
+    id: 'sibi-m',
+    label: 'M',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/M.png',
+    ringkasan: 'Tiga jari (telunjuk, tengah, manis) melipat di atas ibu jari.',
+    teksLangkah: [
+      'Letakkan ibu jari di atas telapak tangan mengarah ke jari kelingking.',
+      'Lipat tiga jari (telunjuk, tengah, manis) menutupi ibu jari.',
+      'Ujung ibu jari menyembul keluar di antara jari manis dan kelingking.',
+    ],
+    tipsGeometri: 'Tiga ruas jari terlihat jelas berada di atas jempol.',
+  },
+  {
+    id: 'sibi-n',
+    label: 'N',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/N.png',
+    ringkasan: 'Dua jari (telunjuk dan tengah) melipat di atas ibu jari.',
+    teksLangkah: [
+      'Posisikan ibu jari di depan telapak tangan.',
+      'Lipat jari telunjuk dan tengah menutupi ibu jari.',
+      'Ujung ibu jari menyembul di antara jari tengah dan jari manis.',
+    ],
+    tipsGeometri: 'Mirip huruf M, tetapi hanya ditutupi oleh dua jari pertama.',
+  },
+  {
+    id: 'sibi-o',
+    label: 'O',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/O.png',
+    ringkasan: 'Semua ujung jari melengkung bertemu dengan ujung ibu jari membentuk lingkaran O.',
+    teksLangkah: [
+      'Lengkungkan keempat jari ke arah bawah.',
+      'Lengkungkan ibu jari ke arah atas hingga semua ujung jari bertemu ujung ibu jari.',
+      'Bentuk lingkaran penuh yang terlihat seperti huruf O dari depan.',
+    ],
+    tipsGeometri: 'Semua ujung jari harus menyentuh ujung ibu jari.',
+  },
+  {
+    id: 'sibi-p',
+    label: 'P',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/P.png',
+    ringkasan: 'Bentuk gestur K tetapi diarahkan menunduk ke bawah.',
+    teksLangkah: [
+      'Bentuk formasi jari seperti huruf K (telunjuk dan jari tengah terbuka dengan ibu jari di tengah).',
+      'Arahkan pergelangan tangan menunduk ke arah bawah.',
+      'Jari telunjuk mengarah horizontal dan jari tengah mengarah lurus ke bawah.',
+    ],
+    tipsGeometri: 'Posisi jari sama persis dengan K, hanya orientasi pergelangan menunduk.',
+  },
+  {
+    id: 'sibi-q',
+    label: 'Q',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/Q.png',
+    ringkasan: 'Bentuk gestur G tetapi diarahkan menunduk lurus ke bawah.',
+    teksLangkah: [
+      'Buka telunjuk dan ibu jari sejajar berjarak sekitar 2 cm.',
+      'Lipat jari tengah, manis, dan kelingking ke telapak.',
+      'Arahkan telunjuk dan ibu jari lurus mengarah ke lantai/bawah.',
+    ],
+    tipsGeometri: 'Seperti huruf G yang diputar 90 derajat ke bawah.',
+  },
+  {
+    id: 'sibi-r',
+    label: 'R',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/R.png',
+    ringkasan: 'Jari telunjuk dan jari tengah disilangkan tegak lurus ke atas.',
+    teksLangkah: [
+      'Luruskan jari telunjuk dan jari tengah ke atas.',
+      'Silangkan jari tengah di atas/depan jari telunjuk.',
+      'Lipat jari manis dan kelingking, kunci dengan ibu jari di depan.',
+    ],
+    tipsGeometri: 'Dua jari terangkat saling menyilang (fingers crossed).',
+  },
+  {
+    id: 'sibi-s',
+    label: 'S',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/S.png',
+    ringkasan: 'Kepalan tangan rapat dengan ibu jari melintang di depan keempat jari.',
+    teksLangkah: [
+      'Kepalkan keempat jari rapat ke arah telapak tangan.',
+      'Silangkan ibu jari melintang di bagian depan jari telunjuk dan tengah.',
+    ],
+    tipsGeometri: 'Beda dengan huruf A: pada huruf S, jempol melintang di DEPAN jari-jari.',
+  },
+  {
+    id: 'sibi-t',
+    label: 'T',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/T.png',
+    ringkasan: 'Ibu jari diselipkan di antara jari telunjuk dan jari tengah.',
+    teksLangkah: [
+      'Kepalkan tangan kanan menghadap depan.',
+      'Selipkan ujung ibu jari ke atas di antara jari telunjuk dan jari tengah.',
+      'Ujung ibu jari menyembul di atas buku jari telunjuk.',
+    ],
+    tipsGeometri: 'Hanya satu jari (telunjuk) yang berada di atas ibu jari.',
+  },
+  {
+    id: 'sibi-u',
+    label: 'U',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/U.png',
+    ringkasan: 'Jari telunjuk dan jari tengah tegak lurus rapat ke atas bersamaan.',
+    teksLangkah: [
+      'Luruskan jari telunjuk dan jari tengah tegak ke atas saling menempel rapat.',
+      'Lipat jari manis dan kelingking ke telapak.',
+      'Tutupkan ibu jari di atas jari manis yang terlipat.',
+    ],
+    tipsGeometri: 'Kedua jari harus menempel rapat, tidak terbuka.',
+  },
+  {
+    id: 'sibi-v',
+    label: 'V',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/V.png',
+    ringkasan: 'Jari telunjuk dan jari tengah terbuka membentuk huruf V (tanda peace).',
+    teksLangkah: [
+      'Luruskan jari telunjuk dan jari tengah ke atas.',
+      'Buka kedua jari membentuk sudut V (tanda damai / peace sign).',
+      'Lipat jari manis dan kelingking ditahan oleh ibu jari di depan telapak.',
+    ],
+    tipsGeometri: 'Kedua jari terbuka membentuk celah sudut sekitar 30-45 derajat.',
+  },
+  {
+    id: 'sibi-w',
+    label: 'W',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/W.png',
+    ringkasan: 'Tiga jari (telunjuk, tengah, manis) terbuka tegak ke atas membentuk huruf W.',
+    teksLangkah: [
+      'Luruskan jari telunjuk, tengah, dan manis ke atas secara terbuka dan terpisah.',
+      'Lipat jari kelingking ke telapak.',
+      'Tahan ujung kelingking menggunakan ujung ibu jari di depan telapak.',
+    ],
+    tipsGeometri: 'Ketiga jari merentang seimbang membentuk siluet huruf W.',
+  },
+  {
+    id: 'sibi-x',
+    label: 'X',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/X.png',
+    ringkasan: 'Jari telunjuk ditekuk seperti kait/kail pancing, jari lain mengepal.',
+    teksLangkah: [
+      'Kepalkan tangan kanan menghadap depan.',
+      'Angkat jari telunjuk dan tekuk ruas ujungnya membentuk kait lengkung.',
+      'Ibu jari menahan jari tengah yang terlipat.',
+    ],
+    tipsGeometri: 'Jari telunjuk bengkok seperti kail, tidak lurus penuh.',
+  },
+  {
+    id: 'sibi-y',
+    label: 'Y',
+    sistem: SISTEM.SIBI,
+    kategori: 'abjad',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/Y.png',
+    ringkasan: 'Ibu jari dan kelingking terentang ke samping luar (tanda shaka / telepon).',
+    teksLangkah: [
+      'Rentangkan ibu jari ke samping kiri dan kelingking ke samping kanan.',
+      'Lipat tiga jari di tengah (telunjuk, tengah, manis) rapat ke telapak.',
+      'Arahkan telapak tangan menghadap ke depan.',
+    ],
+    tipsGeometri: 'Membentuk siluet seperti huruf Y atau gestur "hang loose".',
+  },
+]
+
+/**
+ * 16 Kata Dasar Statis SIBI (Kategori Salam, Angka, & Interaksi Harian)
+ * Sumber: Kamus SIBI Resmi Kemendikbud
+ */
+export const KATA_SIBI = [
+  {
+    id: 'sibi-halo',
+    label: 'Halo / Hai',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Salam',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/B.png', // gestur telapak terbuka mirip B santai di pelipis
+    ringkasan: 'Telapak tangan terbuka tegak di samping pelipis/dahi seperti memberi hormat ramah.',
+    teksLangkah: [
+      'Buka telapak tangan kanan dengan jari-jari rapat menghadap depan.',
+      'Posisikan tangan di samping luar pelipis kanan.',
+      'Tahan pose tegak menghadap lawan bicara.',
+    ],
+    tipsGeometri: 'Telapak tangan rata dan tegak lurus di samping dahi.',
+  },
+  {
+    id: 'sibi-satu',
+    label: 'Satu (1)',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Angka',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/D.png',
+    ringkasan: 'Jari telunjuk tegak lurus ke atas, jari lain terlipat.',
+    teksLangkah: [
+      'Luruskan jari telunjuk tegak lurus ke atas menghadap depan.',
+      'Kepalkan jari tengah, manis, kelingking dan tahan dengan ibu jari.',
+    ],
+    tipsGeometri: 'Hanya jari telunjuk yang lurus vertikal.',
+  },
+  {
+    id: 'sibi-dua',
+    label: 'Dua (2)',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Angka',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/V.png',
+    ringkasan: 'Jari telunjuk dan tengah terbuka ke atas membentuk angka dua / V.',
+    teksLangkah: [
+      'Luruskan jari telunjuk dan tengah ke atas.',
+      'Buka kedua jari membentuk celah.',
+      'Lipat jari manis, kelingking, dan ibu jari rapat ke telapak.',
+    ],
+    tipsGeometri: 'Bentuk sama dengan huruf V dalam abjad.',
+  },
+  {
+    id: 'sibi-tiga',
+    label: 'Tiga (3)',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Angka',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/W.png',
+    ringkasan: 'Ibu jari, telunjuk, dan jari tengah terbuka ke atas.',
+    teksLangkah: [
+      'Luruskan ibu jari, telunjuk, dan jari tengah ke atas.',
+      'Lipat jari manis dan kelingking rapat ke telapak.',
+    ],
+    tipsGeometri: 'Pada isyarat angka 3 SIBI, jempol ikut terbuka ke atas bersama telunjuk & tengah.',
+  },
+  {
+    id: 'sibi-empat',
+    label: 'Empat (4)',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Angka',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/B.png',
+    ringkasan: 'Empat jari terbuka tegak ke atas, ibu jari melipat di depan telapak.',
+    teksLangkah: [
+      'Luruskan empat jari (telunjuk, tengah, manis, kelingking) tegak ke atas sedikit renggang.',
+      'Lipat ibu jari menempel di depan telapak tangan.',
+    ],
+    tipsGeometri: 'Empat jari terangkat tegak tanpa jempol.',
+  },
+  {
+    id: 'sibi-lima',
+    label: 'Lima (5)',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Angka',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/B.png',
+    ringkasan: 'Kelima jari terbuka penuh merentang ke atas menghadap depan.',
+    teksLangkah: [
+      'Buka seluruh kelima jari tangan kanan secara penuh dan lebar.',
+      'Arahkan telapak tangan menghadap ke depan lawan bicara.',
+    ],
+    tipsGeometri: 'Seluruh jari lurus terbuka maksimal.',
+  },
+  {
+    id: 'sibi-saya',
+    label: 'Saya / Aku',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Kata Ganti',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/D.png',
+    ringkasan: 'Ujung jari telunjuk menunjuk ke arah dada sendiri.',
+    teksLangkah: [
+      'Luruskan jari telunjuk tangan kanan.',
+      'Arahkan ujung telunjuk menyentuh atau mengarah tepat ke tengah dada sendiri.',
+      'Lipat jari-jari lainnya ke telapak.',
+    ],
+    tipsGeometri: 'Ujung telunjuk mengarah ke badan pembelajar.',
+  },
+  {
+    id: 'sibi-kamu',
+    label: 'Kamu / Anda',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Kata Ganti',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/D.png',
+    ringkasan: 'Jari telunjuk lurus menunjuk ke arah depan (ke lawan bicara).',
+    teksLangkah: [
+      'Luruskan jari telunjuk tangan kanan lurus ke depan.',
+      'Arahkan langsung ke arah lawan bicara / kamera.',
+      'Lipat jari lainnya ke telapak tangan.',
+    ],
+    tipsGeometri: 'Jari telunjuk horizontal lurus ke depan.',
+  },
+  {
+    id: 'sibi-dia',
+    label: 'Dia / Beliau',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Kata Ganti',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/D.png',
+    ringkasan: 'Jari telunjuk menunjuk ke arah samping (orang ketiga).',
+    teksLangkah: [
+      'Luruskan jari telunjuk tangan kanan.',
+      'Arahkan telunjuk sedikit ke samping kanan luar (merujuk orang di samping).',
+    ],
+    tipsGeometri: 'Arah telunjuk condong sekitar 45 derajat ke samping luar.',
+  },
+  {
+    id: 'sibi-bagus',
+    label: 'Bagus / Baik',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Sifat',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/A.png',
+    ringkasan: 'Ibu jari mengacung tegak lurus ke atas (jempol tanda mantap/bagus).',
+    teksLangkah: [
+      'Kepalkan keempat jari tangan kanan rapat ke telapak.',
+      'Acungkan ibu jari tegak lurus ke atas dengan mantap.',
+      'Posisikan di depan dada menghadap lawan bicara.',
+    ],
+    tipsGeometri: 'Gestur jempol mengacung ke atas (thumbs up).',
+  },
+  {
+    id: 'sibi-buruk',
+    label: 'Buruk / Jelek',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Sifat',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/Y.png',
+    ringkasan: 'Jari kelingking mengacung tegak ke depan/samping.',
+    teksLangkah: [
+      'Kepalkan seluruh jari kecuali jari kelingking.',
+      'Arahkan jari kelingking ke depan dengan posisi telapak menghadap ke dalam.',
+    ],
+    tipsGeometri: 'Bentuk kelingking mandiri sebagai simbol sebaliknya dari bagus.',
+  },
+  {
+    id: 'sibi-setuju',
+    label: 'Setuju / Oke',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Interaksi',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/F.png',
+    ringkasan: 'Ujung telunjuk dan ibu jari bertemu membentuk lingkaran O, 3 jari terangkat (gestur OK).',
+    teksLangkah: [
+      'Sentuhkan ujung ibu jari dan telunjuk membentuk lingkaran.',
+      'Luruskan tiga jari lainnya ke atas.',
+      'Arahkan telapak menghadap ke depan lawan bicara.',
+    ],
+    tipsGeometri: 'Gestur universal tanda "OK".',
+  },
+  {
+    id: 'sibi-siap',
+    label: 'Siap',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Interaksi',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/R.png',
+    ringkasan: 'Jari telunjuk dan jari tengah menyilang tegak di depan dada (huruf R statis SIBI).',
+    teksLangkah: [
+      'Bentuk gestur huruf R (telunjuk dan tengah menyilang).',
+      'Posisikan tegak di depan dada sebelah kanan.',
+    ],
+    tipsGeometri: 'Silangan dua jari tegak stabil.',
+  },
+  {
+    id: 'sibi-tolong',
+    label: 'Tolong / Mohon',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Sosial',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/B.png',
+    ringkasan: 'Telapak tangan terbuka menempel datar di tengah dada.',
+    teksLangkah: [
+      'Buka telapak tangan kanan dengan seluruh jari rapat.',
+      'Tempelkan telapak tangan secara datar di bagian tengah dada.',
+    ],
+    tipsGeometri: 'Telapak tangan rata menyentuh dada bidang tengah.',
+  },
+  {
+    id: 'sibi-stop',
+    label: 'Berhenti / Stop',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Perintah',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/B.png',
+    ringkasan: 'Telapak tangan terbuka menghadap lurus ke depan dengan jari tegak rapat.',
+    teksLangkah: [
+      'Buka telapak tangan kanan menghadap langsung ke arah lawan bicara / kamera.',
+      'Luruskan dan rapatkan kelima jari ke atas.',
+      'Tahan posisi di depan dada.',
+    ],
+    tipsGeometri: 'Telapak tangan tegak vertikal 90 derajat menghadap kamera.',
+  },
+  {
+    id: 'sibi-cinta',
+    label: 'Sayang / Cinta',
+    sistem: SISTEM.SIBI,
+    kategori: 'kata',
+    topik: 'Sosial',
+    jumlahTangan: 1,
+    gambar: '/assets/letters/Y.png',
+    ringkasan: 'Ibu jari, telunjuk, dan kelingking terbuka bersamaan (gestur I Love You).',
+    teksLangkah: [
+      'Rentangkan ibu jari ke samping, jari telunjuk tegak ke atas, dan kelingking tegak ke atas.',
+      'Lipat jari tengah dan jari manis rapat ke telapak tangan.',
+      'Arahkan telapak tangan menghadap ke depan lawan bicara.',
+    ],
+    tipsGeometri: 'Kombinasi huruf I, L, dan Y yang membentuk gestur cinta universal.',
+  },
+]
+
+/**
+ * Mengambil seluruh gestur berdasarkan sistem (SIBI / BISINDO)
+ */
+export function getGesturesBySystem(sistem = SISTEM.SIBI) {
+  if (sistem === SISTEM.SIBI) {
+    return [...ABJAD_SIBI, ...KATA_SIBI]
+  }
+  return []
+}
+
+/**
+ * Mengambil gestur berdasarkan ID unik
+ */
 export function getGestureById(id) {
-  return BUILTIN_GESTURES.find((g) => g.id === id) || null
+  const all = [...ABJAD_SIBI, ...KATA_SIBI]
+  return all.find((g) => g.id === id) || null
+}
+
+/**
+ * Mengambil gestur berdasarkan huruf/label
+ */
+export function getGestureByLabel(label) {
+  const all = [...ABJAD_SIBI, ...KATA_SIBI]
+  return all.find((g) => g.label.toLowerCase() === label.toLowerCase()) || null
 }
