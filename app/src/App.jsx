@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import {
   ABJAD_SIBI,
   KATA_SIBI,
@@ -10,14 +10,15 @@ import {
   Target,
   Lightbulb,
   BookOpen,
-  BookOpenText,
   ChartBar,
-  Camera,
-  ListChecks,
 } from '@phosphor-icons/react'
 import HeroArt from './components/HeroArt'
 import GestureDetailModal from './components/GestureDetailModal'
 import './App.css'
+
+// PracticeLive dimuat lazy: @mediapipe/tasks-vision (~500 kB) hanya diunduh
+// saat user membuka halaman Latihan, bukan di awal.
+const PracticeLive = lazy(() => import('./components/PracticeLive'))
 
 const PAGES = ['beranda', 'abjad', 'kata', 'latihan', 'progres']
 const TEASER_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -308,18 +309,17 @@ function App() {
           </section>
         )}
 
-        {/* HALAMAN 4: LATIHAN (PLACEHOLDER T7) */}
+        {/* HALAMAN 4: LATIHAN LIVE (T4) */}
         {page === 'latihan' && (
-          <section className="card placeholder-card">
-            <h2>Mode Latihan & Kuis</h2>
-            <p>
-              Fitur latihan interaktif kuis tebak gestur via webcam real-time (Ticket T7).
-            </p>
-            <div className="feature-preview-box">
-              <Target className="preview-icon" weight="duotone" size={44} />
-              <p>Kamu akan diberi tantangan memperagakan huruf di depan kamera dan dinilai kecocokannya oleh model AI.</p>
-            </div>
-          </section>
+          <Suspense
+            fallback={
+              <div className="placeholder-card card" style={{ textAlign: 'center' }}>
+                <p>Memuat mode latihan…</p>
+              </div>
+            }
+          >
+            <PracticeLive />
+          </Suspense>
         )}
 
         {/* HALAMAN 5: PROGRES (PLACEHOLDER T8) */}
@@ -342,7 +342,7 @@ function App() {
         <GestureDetailModal
           gesture={selectedGesture}
           onClose={handleCloseModal}
-          onLearn={(g) => {
+          onLearn={() => {
             handleCloseModal()
             setPage('abjad')
           }}
