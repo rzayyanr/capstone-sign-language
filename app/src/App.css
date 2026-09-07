@@ -1,0 +1,159 @@
+/* CapSL app styles (DESIGN.md) */
+
+.app {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-md) var(--space-xl);
+}
+
+/* Header & navigasi */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0 var(--space-md);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--primary-deep);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logo-badge {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.85rem;
+}
+
+.app-nav {
+  display: flex;
+  gap: 4px;
+  background: var(--paper);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  overflow-x: auto;
+}
+
+.nav-btn {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.nav-btn:hover {
+  background: rgba(14, 122, 108, 0.08);
+}
+
+.nav-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+main {
+  margin-top: var(--space-md);
+}
+
+/* Kartu */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-lg);
+}
+
+/* Hero */
+.hero {
+  text-align: left;
+  margin-bottom: var(--space-lg);
+}
+
+.hero h1 {
+  font-size: 1.9rem;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.hero .tagline {
+  color: #6b6258;
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-md);
+  font-size: 1rem;
+}
+
+/* Tombol */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 14px 24px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  min-height: 48px;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-deep);
+  transform: translateY(-1px);
+}
+
+/* Grid huruf (letter tiles) */
+.letter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: var(--space-sm);
+}
+
+.letter-tile {
+  background: var(--primary-soft);
+  border: none;
+  border-radius: var(--radius-xl);
+  aspect-ratio: 1;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--primary-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.letter-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Statistik & info */
+.placeholder-note {
+  color: #8a8178;
+  font-size: 0.9rem;
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.footer {
+  text-align: center;
+  color: #8a8178;
+  font-size: 0.8rem;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(46, 42, 36, 0.08);
+}

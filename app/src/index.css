@@ -1,0 +1,62 @@
+/* CapSL design tokens (sumber: DESIGN.md di root repo) */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+  /* colors */
+  --paper: #fbf6ee;
+  --surface: #ffffff;
+  --ink: #2e2a24;
+  --primary: #0e7a6c;
+  --primary-deep: #0a5e54;
+  --primary-soft: #e3f1ef;
+  --highlight: #f2a41b;
+  --success: #2f9e63;
+  --danger: #d95d5e;
+
+  /* typography */
+  --font-display: 'Baloo 2', 'Nunito Sans', sans-serif;
+  --font-body: 'Nunito Sans', sans-serif;
+
+  /* rounded */
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* elevation */
+  --shadow-card: 0 1px 2px rgba(46, 42, 36, 0.06), 0 0 0 1px rgba(46, 42, 36, 0.04);
+  --shadow-lift: 0 8px 20px rgba(46, 42, 36, 0.1);
+
+  /* layout */
+  --content-max: 560px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
