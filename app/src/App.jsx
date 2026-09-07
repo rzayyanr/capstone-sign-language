@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { getGesturesBySystem } from './modules/content/gestureCatalog'
 import { SISTEM } from './modules/content/types'
+import HeroArt from './components/HeroArt'
 import './App.css'
 
 const PAGES = ['beranda', 'abjad', 'kata', 'latihan', 'progres']
+const TEASER_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
 
 function App() {
   const [page, setPage] = useState('beranda')
@@ -33,15 +35,39 @@ function App() {
         {page === 'beranda' && (
           <>
             <section className="hero">
-              <h1>Kenalan dulu dengan bahasa isyarat.</h1>
-              <p className="tagline">
-                Isyarat adalah aplikasi untuk belajar SIBI, bahasa isyarat
-                resmi Indonesia. Dibuat supaya kamu bisa ngobrol langsung
-                dengan teman Tuli, bukan cuma lewat tulisan.
-              </p>
-              <button className="btn-primary" onClick={() => setPage('abjad')}>
-                Mulai dari huruf A
-              </button>
+              <div className="hero-text">
+                <h1>Kenalan dulu dengan bahasa isyarat.</h1>
+                <p className="tagline">
+                  Isyarat adalah aplikasi untuk belajar SIBI, bahasa isyarat
+                  resmi Indonesia. Dibuat supaya kamu bisa ngobrol langsung
+                  dengan teman Tuli, bukan cuma lewat tulisan.
+                </p>
+                <button className="btn-primary" onClick={() => setPage('abjad')}>
+                  Mulai dari huruf A
+                </button>
+              </div>
+              <HeroArt />
+            </section>
+
+            <section className="card teaser-card">
+              <div className="teaser-head">
+                <h2>Coba huruf pertama</h2>
+                <button className="link-btn" onClick={() => setPage('abjad')}>
+                  Lihat semua →
+                </button>
+              </div>
+              <div className="letter-grid teaser-grid">
+                {TEASER_LETTERS.map((l) => (
+                  <button
+                    key={l}
+                    className="letter-tile"
+                    onClick={() => setPage('abjad')}
+                    aria-label={`Buka huruf ${l}`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
             </section>
 
             <section className="intro-grid">
