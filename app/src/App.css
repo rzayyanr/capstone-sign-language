@@ -257,6 +257,34 @@
   box-shadow: 0 1px 0 var(--primary-deep);
 }
 
+/* Tombol sekunder outline — dipakai utk "Ulangi" (gaya konsisten dgn btn-primary:
+   tinggi sama, radius sama, tapi outline teal transparan-putih, bukan solid) */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 12px 26px; /* 2px border → padding 12px agar tinggi total = 14px+2px primary */
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s ease, box-shadow 0.08s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-soft);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(2px);
+}
+
 .link-btn {
   border: none;
   background: transparent;
