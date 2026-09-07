@@ -36,8 +36,16 @@
   --shadow-card: 0 1px 2px rgba(46, 42, 36, 0.06), 0 0 0 1px rgba(46, 42, 36, 0.04);
   --shadow-lift: 0 8px 20px rgba(46, 42, 36, 0.1);
 
+  /* panel warna Duolingo-hangat (soft, untuk kartu besar) */
+  --panel-mint: #dfefec;
+  --panel-mint-deep: #bcdbd6;
+  --panel-amber: #fbe9c8;
+  --panel-amber-deep: #eed9a7;
+  --panel-peach: #fbe0d2;
+  --panel-peach-deep: #f0c8b2;
+
   /* layout */
-  --content-max: 560px;
+  --content-max: 960px;
 }
 
 * {

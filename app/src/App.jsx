@@ -4,6 +4,17 @@ import {
   KATA_SIBI,
   SUMBER_KONTEN,
 } from './modules/content/gestureCatalog'
+import {
+  Hand,
+  ChatCenteredDots,
+  Target,
+  Lightbulb,
+  BookOpen,
+  BookOpenText,
+  ChartBar,
+  Camera,
+  ListChecks,
+} from '@phosphor-icons/react'
 import HeroArt from './components/HeroArt'
 import GestureDetailModal from './components/GestureDetailModal'
 import './App.css'
@@ -36,7 +47,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="logo" onClick={() => setPage('beranda')} style={{ cursor: 'pointer' }}>
-          <span className="logo-badge">👋</span>
+          <div className="logo-badge"><Hand weight="fill" /></div>
           Isyarat
         </div>
         <nav className="app-nav">
@@ -64,6 +75,7 @@ function App() {
         {/* HALAMAN 1: BERANDA */}
         {page === 'beranda' && (
           <>
+            {/* HERO */}
             <section className="hero">
               <div className="hero-text">
                 <h1>Kenalan dulu dengan bahasa isyarat.</h1>
@@ -82,7 +94,37 @@ function App() {
                   Mulai dari huruf A →
                 </button>
               </div>
-              <HeroArt />
+              <div className="hero-art-col">
+                <HeroArt />
+              </div>
+            </section>
+
+            {/* 3 KARTU MODUL BESAR */}
+            <section className="module-grid" aria-label="Menu belajar">
+              <button
+                className="module-card module-teal"
+                onClick={() => setPage('abjad')}
+              >
+                <Hand className="module-emoji" weight="duotone" size={32} />
+                <span className="module-title">Abjad</span>
+                <span className="module-sub">24 huruf statis SIBI (A-I, K-Y)</span>
+              </button>
+              <button
+                className="module-card module-amber"
+                onClick={() => setPage('kata')}
+              >
+                <ChatCenteredDots className="module-emoji" weight="duotone" size={32} />
+                <span className="module-title">Kata</span>
+                <span className="module-sub">16 kosakata dasar sehari-hari</span>
+              </button>
+              <button
+                className="module-card module-peach"
+                onClick={() => setPage('latihan')}
+              >
+                <Target className="module-emoji" weight="duotone" size={32} />
+                <span className="module-title">Latihan</span>
+                <span className="module-sub">Tebak & peragakan dengan kamera</span>
+              </button>
             </section>
 
             {/* Teaser Kartu Huruf */}
@@ -106,10 +148,12 @@ function App() {
                       onClick={() => handleOpenGesture(g)}
                       aria-label={`Buka panduan huruf ${l}`}
                     >
-                      <span className="tile-letter">{l}</span>
-                      {g && g.gambar && (
-                        <img src={g.gambar} alt={`Gestur ${l}`} className="tile-thumb" />
-                      )}
+                      <span className="tile-inner">
+                        <span className="tile-letter">{l}</span>
+                        {g && g.gambar && (
+                          <img src={g.gambar} alt={`Gestur ${l}`} className="tile-thumb" />
+                        )}
+                      </span>
                     </button>
                   )
                 })}
@@ -119,28 +163,28 @@ function App() {
             {/* Intro Cards */}
             <section className="intro-grid">
               <div className="card intro-card">
+                <Hand className="intro-icon" weight="fill" size={26} />
                 <h2>Apa itu bahasa isyarat?</h2>
                 <p>
                   Bahasa isyarat adalah cara berkomunikasi memakai tangan,
                   ekspresi wajah, dan gerak tubuh. Ini bahasa sehari-hari
-                  teman-teman Tuli, sama seperti bahasa lisan bagi kita.
+                  teman-teman Tuli.
                 </p>
               </div>
               <div className="card intro-card">
+                <Lightbulb className="intro-icon" weight="fill" size={26} />
                 <h2>Kenapa belajar?</h2>
                 <p>
                   Supaya teman Tuli tidak perlu selalu menulis atau memakai
-                  perantara untuk bicara denganmu. Sedikit usaha belajarmu
-                  berarti besar buat mereka.
+                  perantara untuk bicara denganmu.
                 </p>
               </div>
               <div className="card intro-card">
+                <BookOpen className="intro-icon" weight="fill" size={26} />
                 <h2>Apa itu SIBI?</h2>
                 <p>
                   SIBI (Sistem Isyarat Bahasa Indonesia) adalah sistem isyarat
-                  resmi yang dibakukan pemerintah dan dipakai di sekolah luar
-                  biasa. Isyaratnya satu tangan dan ada kamus resminya, jadi
-                  enak dipelajari bertahap.
+                  resmi pemerintah, satu tangan, ada kamus resminya.
                 </p>
               </div>
             </section>
@@ -272,7 +316,7 @@ function App() {
               Fitur latihan interaktif kuis tebak gestur via webcam real-time (Ticket T7).
             </p>
             <div className="feature-preview-box">
-              <span className="preview-icon">🎯</span>
+              <Target className="preview-icon" weight="duotone" size={44} />
               <p>Kamu akan diberi tantangan memperagakan huruf di depan kamera dan dinilai kecocokannya oleh model AI.</p>
             </div>
           </section>
@@ -286,7 +330,7 @@ function App() {
               Riwayat penguasaan gestur yang tersimpan lokal di browser kamu (Ticket T8).
             </p>
             <div className="feature-preview-box">
-              <span className="preview-icon">📊</span>
+              <ChartBar className="preview-icon" weight="duotone" size={44} />
               <p>Mencatat huruf mana saja yang sudah berhasil diperagakan 3x berturut-turut.</p>
             </div>
           </section>
