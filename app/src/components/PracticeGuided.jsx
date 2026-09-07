@@ -13,10 +13,11 @@
 // aktif selama fase try; mati otomatis saat kembali ke learn/success.
 // ============================================================
 import { useEffect, useRef, useState } from 'react'
-import { CheckCircle, ArrowRight, ArrowCounterClockwise, Camera, Hand, CircleNotch, VideoCameraSlash, GridFour } from '@phosphor-icons/react'
+import { CheckCircle, ArrowRight, ArrowCounterClockwise, Camera, Hand, CircleNotch, VideoCameraSlash, GridFour, XCircle, BookOpenText } from '@phosphor-icons/react'
 import { ABJAD_SIBI } from '../modules/content/gestureCatalog'
 import { loadModel, predictLandmarks } from '../modules/recognition/mlp'
 import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../modules/recognition/camera'
+import { analyze } from '../modules/recognition/geometry'
 
 const STATIC_LETTERS = ABJAD_SIBI.filter((g) => g.kategori === 'abjad')
 const SUCCESS_FRAMES = 8 // N frame stabil benar berturut-turut
@@ -24,9 +25,13 @@ const FAIL_FRAMES = 12 // N frame salah berturut-turut sebelum "coba lagi"
 const CONFIDENCE = 0.5
 
 export default function PracticeGuided() {
-  const [phase, setPhase] = useState('learn') // learn | try | success
+  const [phase, setPhase] = useState('learn') // learn | try | success | wrong
   const [index, setIndex] = useState(0)
   const [gridOpen, setGridOpen] = useState(false)
+  // info saat salah (T6): huruf terdeteksi + saran geometris
+  const [wrongInfo, setWrongInfo] = useState(null) // { detected, tips[] }
+  const lastLmRef = useRef(null) // landmark frame terakhir utk analisis geometri
+  const lastPredRef = useRef(null) // label prediksi frame terakhir
 
   const gesture = STATIC_LETTERS[index]
   const progress = ((index + 1) / STATIC_LETTERS.length) * 100
@@ -50,6 +55,9 @@ export default function PracticeGuided() {
     setPhase('learn')
     setJudge('none')
     setWrongCount(0)
+    setWrongInfo(null)
+    lastLmRef.current = null
+    lastPredRef.current = null
     streakRef.current = { correct: 0, wrong: 0, miss: 0 }
   }
 
@@ -121,6 +129,10 @@ export default function PracticeGuided() {
     try {
       const result = predictLandmarks(flat)
       const isTarget = result.label === gesture.label
+      // simpan utk analisis feedback (T6)
+      lastLmRef.current = lms
+      lastPredRef.current = result.label
+
       if (isTarget && result.confidence >= CONFIDENCE) {
         s.correct += 1
         s.wrong = 0
@@ -139,11 +151,19 @@ export default function PracticeGuided() {
       } else if (s.wrong >= FAIL_FRAMES) {
         setJudge('wrong')
         setWrongCount((c) => c + 1)
-        // Kembali ke learn: panduan muncul lagi sebelum coba ulang
+        // Feedback cerdas (T6): tampilkan huruf terdeteksi + saran geometris
+        // + contoh benar. User bisa langsung coba lagi dari sini.
         trackerRef.current?.stop()
         trackerRef.current = null
         setCamStatus('off')
-        setPhase('learn')
+        const lm = lastLmRef.current
+        const detected = lastPredRef.current || '?'
+        const geo = lm ? analyze(gesture.label, lm) : { tips: [] }
+        setWrongInfo({
+          detected,
+          tips: geo.tips.length ? geo.tips : ['Perhatikan posisi jari pada contoh, lalu coba lagi.'],
+        })
+        setPhase('wrong')
       }
     } catch {
       // frame tidak valid; lewati
@@ -289,6 +309,49 @@ export default function PracticeGuided() {
           {/* indikator privasi: kamera aktif */}
           <div className="cam-on-indicator">
             <span className="cam-dot" /> Kamera aktif — video diproses di perangkatmu
+          </div>
+        </div>
+      )}
+
+      {/* FASE WRONG (T6): feedback cerdas — huruf terdeteksi + saran geometris + contoh benar */}
+      {phase === 'wrong' && wrongInfo && (
+        <div className="guided-wrong">
+          <div className="wrong-card">
+            <div className="wrong-head">
+              <XCircle size={44} weight="fill" className="wrong-icon" />
+              <div>
+                <h3>Belum tepat untuk huruf {gesture.label}</h3>
+                <p className="wrong-detected">
+                  Terdeteksi sebagai <strong>{wrongInfo.detected}</strong> — hampir! Bandingkan dengan contoh & saran di bawah.
+                </p>
+              </div>
+            </div>
+
+            <div className="wrong-compare">
+              {/* Contoh benar: gambar statis */}
+              <div className="wrong-example">
+                <span className="wrong-example-label">Contoh huruf {gesture.label}</span>
+                <img src={gesture.gambar} alt={`Contoh huruf ${gesture.label}`} className="wrong-example-img" />
+              </div>
+              {/* Saran perbaikan */}
+              <div className="wrong-tips">
+                <span className="wrong-tips-label">Yang perlu diperbaiki</span>
+                <ul>
+                  {wrongInfo.tips.map((t, i) => (
+                    <li key={i}>{t}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="wrong-actions">
+              <button className="btn-secondary" onClick={resetToLearn}>
+                <BookOpenText size={18} /> Lihat Panduan
+              </button>
+              <button className="btn-primary" onClick={beginTry}>
+                <Camera size={18} weight="fill" /> Coba Lagi
+              </button>
+            </div>
           </div>
         </div>
       )}
