@@ -1,5 +1,6 @@
 // ============================================================
-// Halaman Latihan Live (T4): kamera + deteksi huruf real-time
+// Mode Latihan Bebas (T4): kamera + deteksi huruf real-time
+// Tangan apa pun → AI menebak huruf (tanpa target tertentu).
 // ============================================================
 import { useEffect, useRef, useState } from 'react'
 import { VideoCamera, Hand, CircleNotch, VideoCameraSlash } from '@phosphor-icons/react'
@@ -9,7 +10,7 @@ import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../module
 const MIN_CONFIDENCE = 0.4
 const STABILIZE_FRAMES = 6
 
-export default function PracticeLive() {
+export default function PracticeFree() {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const trackerRef = useRef(null)
@@ -114,8 +115,8 @@ export default function PracticeLive() {
   return (
     <section className="practice-live">
       <div className="practice-live-header">
-        <h2>Latihan Live</h2>
-        <p className="page-sub">Peragakan huruf di depan kamera. AI menebak huruf yang kamu bentuk.</p>
+        <h2>Latihan Bebas</h2>
+        <p className="page-sub">Peragakan huruf apa pun di depan kamera. AI menebak huruf yang kamu bentuk.</p>
       </div>
 
       {/* KARTU KAMERA */}

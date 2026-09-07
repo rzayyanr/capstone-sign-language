@@ -884,3 +884,152 @@
 /* spinner */
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   Halaman Latihan (T5) — mode tabs + Belajar Terpandu
+   ============================================================ */
+.practice-page { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+/* --- Tab mode --- */
+.mode-tabs {
+  display: flex; gap: 8px; background: var(--panel-mint);
+  border-radius: 999px; padding: 5px; width: fit-content; max-width: 100%;
+}
+.mode-tab {
+  display: flex; align-items: center; gap: 8px;
+  border: none; background: transparent; cursor: pointer;
+  padding: 10px 22px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  color: var(--primary-deep); transition: all 0.15s;
+}
+.mode-tab.active {
+  background: var(--primary); color: #fff;
+  box-shadow: 0 3px 0 var(--primary-deep);
+}
+.mode-tab:not(.active):hover { background: rgba(255, 255, 255, 0.6); }
+
+/* --- Terpandu: progress + toolbar --- */
+.guided { display: flex; flex-direction: column; gap: var(--space-md); }
+.guided-progress { display: flex; align-items: center; gap: 12px; }
+.progress-track {
+  flex: 1; height: 12px; background: var(--panel-mint-deep);
+  border-radius: 999px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--primary); border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.progress-text { font-weight: 700; color: var(--muted); font-size: 0.9rem; }
+
+.guided-toolbar { display: flex; align-items: center; justify-content: space-between; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--border);
+  background: var(--card); cursor: pointer; font-size: 1.1rem; font-weight: 700;
+  color: var(--primary-deep);
+}
+.icon-btn:disabled { opacity: 0.4; cursor: default; }
+.grid-btn {
+  display: flex; align-items: center; gap: 8px;
+  border: none; background: var(--panel-amber); color: #7a5a00;
+  padding: 9px 18px; border-radius: 999px; cursor: pointer;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+}
+
+/* --- Grid semua huruf --- */
+.guided-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 6px; background: var(--panel-mint); border-radius: 16px; padding: 12px;
+}
+.grid-letter {
+  aspect-ratio: 1; border: 2px solid transparent; border-radius: 12px;
+  background: #fff; font-family: var(--font-display); font-weight: 800;
+  font-size: 1.05rem; color: var(--primary-deep); cursor: pointer;
+}
+.grid-letter:hover { border-color: var(--primary); }
+.grid-letter.current { background: var(--primary); color: #fff; }
+
+/* --- Fase learn: kartu panduan --- */
+.guided-learn { display: flex; justify-content: center; }
+.learn-card {
+  display: flex; gap: var(--space-lg); background: var(--card);
+  border: 1px solid var(--border); border-radius: 24px; padding: var(--space-lg);
+  max-width: 760px; width: 100%; box-shadow: var(--shadow-sm);
+}
+.learn-visual { position: relative; flex-shrink: 0; width: 240px; }
+.learn-img-box {
+  background: var(--panel-mint); border-radius: 20px; padding: 14px;
+  border: 3px solid var(--panel-mint-deep); overflow: hidden;
+}
+.learn-img-box img { width: 100%; height: auto; display: block; border-radius: 12px; }
+.learn-letter {
+  position: absolute; top: -14px; right: -14px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--primary); color: #fff; border: 3px solid #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.6rem;
+  box-shadow: var(--shadow-lift);
+}
+.learn-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.learn-body h3 { margin: 0; }
+.learn-summary { margin: 0; color: var(--muted); line-height: 1.5; }
+.learn-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.learn-steps li { line-height: 1.5; }
+.learn-tip {
+  margin: 0; background: var(--panel-amber); border-radius: 12px;
+  padding: 10px 14px; font-size: 0.9rem; line-height: 1.5;
+}
+.learn-feedback {
+  margin: 0; background: var(--panel-peach); border-radius: 12px;
+  padding: 10px 14px; font-size: 0.92rem; font-weight: 600; color: #a03c20;
+}
+.cta-try { align-self: flex-start; margin-top: 4px; }
+
+/* --- Fase try --- */
+.guided-try { display: flex; flex-direction: column; gap: var(--space-md); align-items: center; }
+.try-target {
+  display: flex; align-items: center; gap: 16px; width: 100%; max-width: 640px;
+  background: var(--panel-mint); border-radius: 18px; padding: 12px 20px;
+  border: 3px solid var(--panel-mint-deep);
+}
+.try-target-label { font-weight: 600; color: var(--muted); }
+.try-target-letter {
+  font-family: var(--font-display); font-weight: 800; font-size: 2rem;
+  color: var(--primary-deep); background: #fff; border-radius: 14px;
+  padding: 2px 18px; border: 2px solid var(--panel-mint-deep);
+}
+.try-video-wrap { max-width: 640px; }
+.try-status { min-height: 28px; }
+.try-waiting { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+.cam-on-indicator {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; color: var(--primary-deep); font-weight: 600;
+  background: var(--panel-mint); border-radius: 999px; padding: 6px 14px;
+}
+.cam-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 50% { opacity: 0.4; } }
+
+/* --- Fase success --- */
+.guided-success { display: flex; justify-content: center; }
+.success-card {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  background: var(--panel-mint); border: 3px solid var(--panel-mint-deep);
+  border-radius: 24px; padding: 40px 32px; max-width: 480px; width: 100%;
+  text-align: center; box-shadow: var(--shadow-lift);
+}
+.success-icon { color: var(--primary); }
+.success-card h3 { margin: 0; }
+.success-card p { margin: 0; color: var(--muted); }
+.success-actions { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .learn-card { flex-direction: column; align-items: center; text-align: left; }
+  .learn-visual { width: 180px; }
+  .mode-tab { padding: 8px 14px; font-size: 0.85rem; }
+  .try-target { flex-wrap: wrap; }
+}

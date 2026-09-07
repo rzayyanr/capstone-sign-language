@@ -16,9 +16,9 @@ import HeroArt from './components/HeroArt'
 import GestureDetailModal from './components/GestureDetailModal'
 import './App.css'
 
-// PracticeLive dimuat lazy: @mediapipe/tasks-vision (~500 kB) hanya diunduh
+// PracticePage dimuat lazy: @mediapipe/tasks-vision (~500 kB) hanya diunduh
 // saat user membuka halaman Latihan, bukan di awal.
-const PracticeLive = lazy(() => import('./components/PracticeLive'))
+const PracticePage = lazy(() => import('./components/PracticePage'))
 
 const PAGES = ['beranda', 'abjad', 'kata', 'latihan', 'progres']
 const TEASER_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -309,7 +309,7 @@ function App() {
           </section>
         )}
 
-        {/* HALAMAN 4: LATIHAN LIVE (T4) */}
+        {/* HALAMAN 4: LATIHAN (2 MODE: Terpandu + Bebas) */}
         {page === 'latihan' && (
           <Suspense
             fallback={
@@ -318,7 +318,7 @@ function App() {
               </div>
             }
           >
-            <PracticeLive />
+            <PracticePage />
           </Suspense>
         )}
 
