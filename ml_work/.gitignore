@@ -1,0 +1,12 @@
+# Data landmark (diunduh via download_data.py, tidak di-commit)
+data/landmarks/
+data/*.parquet
+data/sample.json
+
+# Model MediaPipe (7.8 MB, diunduh)
+models/
+
+# Artefak pelatihan
+artifact/
+__pycache__/
+*.pyc
