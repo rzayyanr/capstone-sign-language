@@ -1,32 +1,27 @@
-# ADR-0002: Bahasa target BISINDO, validasi kosakata oleh komunitas Tuli
+# ADR-0002: SIBI sebagai bahasa target MVP (bukan BISINDO)
 
-- Status: Accepted (dengan risiko validasi terbuka)
+- Status: Accepted (revisi dari keputusan awal — lihat ADR-0005)
 - Tanggal: 2026-09-07
 
 ## Konteks
 
-Indonesia memiliki dua bahasa isyarat utama: **BISINDO** (tumbuh alami di komunitas Tuli, dipakai dalam pergaulan sehari-hari) dan **SIBI** (sistem isyarat formal yang dibakukan pemerintah untuk pendidikan di SLB, alfabetnya mengadopsi ASL).
+Indonesia memiliki dua bahasa isyarat utama: **BISINDO** (tumbuh alami di komunitas Tuli, dipakai sehari-hari; >90% Tuli lebih memilihnya) dan **SIBI** (sistem isyarat formal yang dibakukan pemerintah untuk pendidikan SLB, abjadnya mengadaptasi ASL).
 
-Pertimbangan memilih BISINDO:
-- BISINDO adalah bahasa isyarat yang **benar-benar dipakai** komunitas Tuli Indonesia sehari-hari; survei menyebut lebih dari 90% penyandang Tuli Indonesia lebih memilih BISINDO untuk interaksi autentik.
-- Cerita dampak proyek paling jujur: membantu orang dengar berkomunikasi dengan teman Tuli dalam bahasa yang nyata dipakai.
-- SIBI lebih "buatan" dan penggunaannya terbatas di ruang pendidikan formal.
+Semula proyek memilih BISINDO. Namun setelah **verifikasi langsung** (video "Abjad Jari BISINDO A-Z" oleh Komunitas Tuli Kupang, ditonton pada 2026-09-07), terbukti bahwa **abjad BISINDO memakai DUA tangan** (contoh huruf H: dua telunjuk sejajar + ibu jari bertemu di tengah). Ini berbeda dari asumsi awal (abjad satu tangan mirip ASL). Konsekuensinya: deteksi 2 tangan (42 landmark), dataset 2× lipat & lebih rumit, feedback antar dua tangan, dan dataset publik ASL tidak bisa dipakai.
 
-Konsekuensi dari pilihan ini:
-- BISINDO **tumbuh alami**, jadi ada variasi isyarat antar daerah dan dokumentasi resmi yang lebih tipis daripada SIBI.
-- Dataset publik untuk BISINDO **hampir tidak ada** (dataset isyarat publik umumnya ASL atau SIBI), sehingga pengumpulan data latih harus **rekam sendiri** (bisa dikombinasikan dengan pencarian dataset publik yang relevan).
-- Abjad BISINDO cukup terdokumentasi (chart/video komunitas), tetapi **kata** BISINDO sangat perlu validasi narasumber karena variasi regionalnya.
+Pertimbangan memilih **SIBI** untuk MVP:
+- Abjad SIBI **satu tangan** (seperti ASL): teknis paling ringan, dataset publik ASL bisa dipakai untuk prototyping/awal.
+- Terdapat **Kamus SIBI resmi Kemendikbud** (pmpk.kemdikbud.go.id/sibi) yang lengkap & bisa dikutip sebagai sumber kebenaran, tanpa butuh akses komunitas.
+- Proyek capstone 1 semester dengan 1 developer lebih realistis selesai dengan kualitas baik.
 
 ## Keputusan
 
-- Bahasa target: **BISINDO**.
-- Abjad: mulai dari dokumentasi BISINDO yang tersedia; minta dicek narasumber bila akses didapat.
-- Kata dasar: daftar 15-20 kata **harus divalidasi narasumber yang kompeten** (teman Tuli, Gerkatin, Pusbisindo, SLB, atau dosen yang paham) sebelum dijadikan konten dan dataset.
-- Jika sampai tengah semester akses narasumber belum didapat: MVP difokuskan ke abjad + kata yang dokumentasinya paling kuat, dan risiko ini dicatat serta dikomunikasikan ke dosen pembimbing.
-- Pencarian akses komunitas adalah **tanggung jawab anggota tim non-coding** (riset & validasi).
+- Bahasa target MVP: **SIBI**.
+- Sumber kebenaran konten & gambar panduan: **Kamus SIBI resmi Kemendikbud**.
+- BISINDO tidak dihapus dari visi, tapi menjadi **stretch goal ber-gerbang** (lihat ADR-0005), bukan janji MVP.
 
 ## Konsekuensi
 
-- Positif: isyarat yang diajarkan kredibel dan dipakai nyata; proyek punya narasi dampak kuat.
-- Negatif: pengumpulan dataset kata tertunda sampai validasi (atau fallback dipakai); beban dataset rekam sendiri lebih berat daripada memakai dataset publik ASL/SIBI.
-- Risiko terbuka: tanpa narasumber, cakupan kata MVP harus menyusut. Ini dikelola dengan ADR ini dan dikomunikasikan ke dosen.
+- Positif: teknis ringan, dataset publik ASL membantu, dokumentasi resmi bisa dikutip, proyek realistis selesai.
+- Negatif: SIBI kurang dipakai komunitas sehari-hari (cerita dampak sedikit lebih lemah daripada BISINDO); BISINDO (bahasa komunitas yang hidup) tidak masuk MVP.
+- Mitigasi: arsitektur disiapkan multi-sistem (ADR-0005) dan narasi laporan menyebut SIBI sebagai "sistem isyarat resmi pendidikan Indonesia" sambil mengakui keunggulan komunitas BISINDO.
