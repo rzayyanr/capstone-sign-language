@@ -1,0 +1,33 @@
+.DS_Store
+node_modules
+dist
+dist-ssr
+coverage
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Word/WPS lock files
+~$*.docx
+~$*.doc
+
+# Env
+.env
+.env.*
+!.env.example
