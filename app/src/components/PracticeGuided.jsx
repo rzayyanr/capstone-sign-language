@@ -20,8 +20,8 @@ import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../module
 import { analyze } from '../modules/recognition/geometry'
 
 const STATIC_LETTERS = ABJAD_SIBI.filter((g) => g.kategori === 'abjad')
-const SUCCESS_FRAMES = 8 // N frame stabil benar berturut-turut
-const FAIL_FRAMES = 12 // N frame salah berturut-turut sebelum "coba lagi"
+const HOLD_MS = 5000 // syarat lulus: gestur benar ditahan 5 detik penuh (waktu nyata)
+const FAIL_FRAMES = 12 // N frame salah berturut-turut (tanpa pernah benar) sebelum "coba lagi"
 const CONFIDENCE = 0.5
 
 export default function PracticeGuided() {
@@ -32,6 +32,9 @@ export default function PracticeGuided() {
   const [wrongInfo, setWrongInfo] = useState(null) // { detected, tips[] }
   const lastLmRef = useRef(null) // landmark frame terakhir utk analisis geometri
   const lastPredRef = useRef(null) // label prediksi frame terakhir
+  // progres tahan 5 detik (0..HOLD_MS) utk UI hitung mundur
+  const [holdMs, setHoldMs] = useState(0)
+  const holdStartRef = useRef(null) // timestamp kapan streak benar mulai
 
   const gesture = STATIC_LETTERS[index]
   const progress = ((index + 1) / STATIC_LETTERS.length) * 100
@@ -58,7 +61,9 @@ export default function PracticeGuided() {
     setWrongInfo(null)
     lastLmRef.current = null
     lastPredRef.current = null
-    streakRef.current = { correct: 0, wrong: 0, miss: 0 }
+    holdStartRef.current = null
+    setHoldMs(0)
+    streakRef.current = { wrong: 0, miss: 0 }
   }
 
   // ===== fase try: logika kamera + penilaian =====
@@ -72,7 +77,7 @@ export default function PracticeGuided() {
   const [wrongCount, setWrongCount] = useState(0)
 
   // ref penilaian (dibaca di callback frame tanpa re-render)
-  const streakRef = useRef({ correct: 0, wrong: 0, miss: 0 })
+  const streakRef = useRef({ wrong: 0, miss: 0 })
 
   // Mulai sesi coba (kamera nyala)
   async function beginTry() {
@@ -81,7 +86,9 @@ export default function PracticeGuided() {
     setCamError('')
     setHandSeen(false)
     setJudge('none')
-    streakRef.current = { correct: 0, wrong: 0, miss: 0 }
+    setHoldMs(0)
+    holdStartRef.current = null
+    streakRef.current = { wrong: 0, miss: 0 }
     try {
       await loadModel()
       const tracker = await startCamera({
@@ -118,7 +125,8 @@ export default function PracticeGuided() {
 
     if (!flat) {
       setHandSeen(false)
-      s.correct = 0
+      holdStartRef.current = null
+      setHoldMs(0)
       s.wrong = 0
       s.miss += 1
       return
@@ -133,37 +141,51 @@ export default function PracticeGuided() {
       lastLmRef.current = lms
       lastPredRef.current = result.label
 
+      // oxlint-disable-next-line react/purity -- handleFrame = callback kamera, bukan render
+      const now = performance.now()
       if (isTarget && result.confidence >= CONFIDENCE) {
-        s.correct += 1
-        s.wrong = 0
+        // benar: lanjutkan/mulai hitungan tahan 5 detik (waktu nyata)
+        if (!holdStartRef.current) {
+          holdStartRef.current = now
+          s.wrong = 0
+        }
+        const elapsed = now - holdStartRef.current
+        if (elapsed >= HOLD_MS) {
+          // LULUS: gestur benar ditahan 5 detik penuh
+          setHoldMs(HOLD_MS)
+          setJudge('success')
+          setPhase('success')
+          trackerRef.current?.stop()
+          trackerRef.current = null
+          setCamStatus('off')
+        } else {
+          // bulatkan ke 100ms: nilai sama antar frame → React bailout (tak re-render)
+          setHoldMs(Math.floor(elapsed / 100) * 100)
+          s.wrong = 0
+        }
       } else {
-        s.correct = 0
+        // salah / berubah: reset hitungan tahan, tapi bukan gagal
+        holdStartRef.current = null
+        setHoldMs(0)
         s.wrong += 1
-      }
-
-      // Penilaian stabil: N frame benar berturut-turut
-      if (s.correct >= SUCCESS_FRAMES) {
-        setJudge('success')
-        setPhase('success')
-        trackerRef.current?.stop()
-        trackerRef.current = null
-        setCamStatus('off')
-      } else if (s.wrong >= FAIL_FRAMES) {
-        setJudge('wrong')
-        setWrongCount((c) => c + 1)
-        // Feedback cerdas (T6): tampilkan huruf terdeteksi + saran geometris
-        // + contoh benar. User bisa langsung coba lagi dari sini.
-        trackerRef.current?.stop()
-        trackerRef.current = null
-        setCamStatus('off')
-        const lm = lastLmRef.current
-        const detected = lastPredRef.current || '?'
-        const geo = lm ? analyze(gesture.label, lm) : { tips: [] }
-        setWrongInfo({
-          detected,
-          tips: geo.tips.length ? geo.tips : ['Perhatikan posisi jari pada contoh, lalu coba lagi.'],
-        })
-        setPhase('wrong')
+        // hanya jadi "wrong" (feedback) jika salah terus-menerus TANPA pernah benar
+        if (s.wrong >= FAIL_FRAMES) {
+          setJudge('wrong')
+          setWrongCount((c) => c + 1)
+          // Feedback cerdas (T6): tampilkan huruf terdeteksi + saran geometris
+          // + contoh benar. User bisa langsung coba lagi dari sini.
+          trackerRef.current?.stop()
+          trackerRef.current = null
+          setCamStatus('off')
+          const lm = lastLmRef.current
+          const detected = lastPredRef.current || '?'
+          const geo = lm ? analyze(gesture.label, lm) : { tips: [] }
+          setWrongInfo({
+            detected,
+            tips: geo.tips.length ? geo.tips : ['Perhatikan posisi jari pada contoh, lalu coba lagi.'],
+          })
+          setPhase('wrong')
+        }
       }
     } catch {
       // frame tidak valid; lewati
@@ -299,10 +321,20 @@ export default function PracticeGuided() {
           </div>
 
           <div className="try-status">
-            {camStatus === 'on' && judge === 'none' && (
+            {camStatus === 'on' && judge === 'none' && handSeen && holdMs === 0 && (
               <p className="try-waiting">
-                Tahan posisi tanganmu… (butuh beberapa detik agar stabil)
+                Mantap! Sekarang tahan posisi ini 5 detik…
               </p>
+            )}
+            {camStatus === 'on' && judge === 'none' && handSeen && holdMs > 0 && (
+              <div className="hold-box">
+                <p className="try-hold-label">
+                  Pertahankan! {((HOLD_MS - holdMs) / 1000).toFixed(1)} detik lagi
+                </p>
+                <div className="hold-bar">
+                  <div className="hold-bar-fill" style={{ width: `${(holdMs / HOLD_MS) * 100}%` }} />
+                </div>
+              </div>
             )}
           </div>
 

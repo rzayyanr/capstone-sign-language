@@ -1001,6 +1001,21 @@
 .try-status { min-height: 28px; }
 .try-waiting { margin: 0; color: var(--muted); font-size: 0.95rem; }
 
+/* Progres tahan 5 detik (syarat lulus: gestur benar ditahan penuh) */
+.hold-box { display: flex; flex-direction: column; gap: 6px; max-width: 480px; margin: 0 auto; }
+.try-hold-label {
+  margin: 0; color: var(--primary-deep); font-weight: 800; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.hold-bar {
+  height: 14px; background: var(--panel-mint); border: 2px solid var(--panel-mint-deep);
+  border-radius: 999px; overflow: hidden;
+}
+.hold-bar-fill {
+  height: 100%; background: var(--primary); border-radius: 999px;
+  transition: width 0.12s linear;
+}
+
 .cam-on-indicator {
   display: flex; align-items: center; gap: 8px;
   font-size: 0.82rem; color: var(--primary-deep); font-weight: 600;
