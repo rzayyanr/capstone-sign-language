@@ -57,6 +57,7 @@
       "Stack: React + Vite.",
       "Bahasa target dan sumber konten: SIBI; konten dan gambar panduan bersumber dari Kamus SIBI resmi Kemendikbud.",
       "Scope MVP: 24 abjad statis SIBI (A-I, K-Y) + 15-20 kata dasar statis. Huruf J dan Z (dinamis) tidak masuk MVP.",
+      "Kriteria pemilihan 15-20 kata: kata dasar sehari-hari yang paling relevan untuk komunikasi awal (sapaan, kebutuhan dasar), dipilih yang gesturnya statis bila memungkinkan, dan bersumber dari Kamus SIBI resmi. Daftar final ditentukan di fase riset (P4) dan dicatat sebagai konten katalog.",
       "Katalog gestur data-driven: setiap gestur adalah data {id, label, sistem [SIBI], jumlah_tangan: 1, gambar_panduan, teks_langkah, aturan_geometris?}. Memungkinkan BISINDO (2 tangan) ditambahkan sebagai sistem baru.",
       "Arsitektur modular: modul pengenalan (deteksi + klasifikasi) terisolasi; modul logika produk (alur belajar, kuis, mastery, progres) tidak bergantung langsung pada kamera; modul konten/katalog gestur data-driven.",
       "Feedback geometris: aturan berbasis landmark per huruf (misal \"jari telunjuk lurus\", \"jari rapat\") untuk abjad; dipakai untuk saran perbaikan.",
@@ -70,7 +71,28 @@
       "Arsitektur multi-sistem: BISINDO (2 tangan) sebagai stretch goal ber-gerbang, bukan bagian spec ini."
     ]},
 
-    {"type": "heading", "level": 2, "text": "5. Testing Decisions"},
+    {"type": "heading", "level": 2, "text": "5. Non-Functional Requirements"},
+    {"type": "bullet_list", "items": [
+      "Browser didukung: Chrome versi terbaru (dan browser Chromium lain seperti Edge). Target utama kamera + MediaPipe, jadi browser modern diutamakan.",
+      "Performa: aplikasi merespons penilaian dalam <1 detik dari gestur stabil; frame rate kamera tetap halus (>=15 fps di laptop standar) saat mode latihan.",
+      "Privasi: semua proses pengenalan berjalan di perangkat pengguna (client-side); video kamera tidak direkam, tidak dikirim ke server, tidak dipersist. Ada indikator jelas saat kamera aktif.",
+      "Penanganan error: saat kamera tidak tersedia / izin ditolak / tidak ada tangan terdeteksi / model gagal dimuat, aplikasi menampilkan pesan ramah yang jelas + opsi lanjut ke mode tanpa kamera (bukan error diam-diam).",
+      "Tersedia offline-ish: mode tanpa kamera memungkinkan pengguna melihat materi & panduan tanpa akses kamera.",
+      "Aksesibilitas dasar: kontras teks memadai untuk gangguan penglihatan ringan; ukuran font & target sentuh layak di layar HP."
+    ]},
+
+    {"type": "heading", "level": 2, "text": "6. Risks & Mitigations"},
+    {"type": "table", "style": "Table Grid", "header": ["Risiko", "Dampak", "Mitigasi"], "rows": [
+      ["Dataset rekam sendiri telat / kurang", "Model akurasi rendah, jadwal mundur", "Mulai rekam di P5-6 (jalur kritis); target +/-100 frame/gestur; dataset ASL publik untuk prototyping awal"],
+      ["Akurasi model < target 85%", "Tidak memenuhi target MVP", "Evaluasi dini (P7 gerbang); tambah data huruf yang sering salah; pangkas scope (kata jadi fase 2); sampaikan jujur ke dosen"],
+      ["BISINDO stretch tidak kesampaian", "Tidak ada fitur BISINDO di MVP", "BISINDO bukan janji (ADR-0005); arsitektur multi-sistem disiapkan; disebut pengembangan lanjutan di laporan"],
+      ["Jadwal molor dari P12", "MVP tidak siap demo akhir", "Rencana cadangan: pangkas kata ke fase 2; nol fitur baru setelah P8; QA & laporan paralel"],
+      ["Kamera bermasalah saat demo", "Demo gagal di hari H", "Mode uji dari file gambar + video demo cadangan (T9)"],
+      ["Validasi komunitas Tuli tidak didapat", "Konten BISINDO berisiko salah versi", "Untuk MVP SIBI tidak wajib (Kamus SIBI resmi); BISINDO hanya bila akses didapat"],
+      ["Salah satu tim tidak bisa lanjut", "Beban menumpuk ke satu orang", "Konten/riset/dokumentasi dipisah ke non-coding; batas tanggung jawab jelas"]
+    ]},
+
+    {"type": "heading", "level": 2, "text": "7. Testing Decisions"},
     {"type": "paragraph", "text": "Prinsip: uji perilaku eksternal, bukan detail implementasi. Yang baik: memastikan logika produk benar tanpa bergantung pada kamera/model nyata."},
     {"type": "bullet_list", "items": [
       "Modul logika produk (alur belajar, kuis, mastery, progres): diuji dengan landmark sintetis atau input file yang sudah diketahui. Misal: memberi landmark yang benar untuk huruf A menghasilkan status benar; yang salah menghasilkan salah; setelah 3x benar mastery tercapai.",
@@ -78,10 +100,11 @@
       "Penilaian stabil (N-frame): diuji dengan urutan prediksi sintetis (stabil vs berubah-ubah), sistem hanya mengunci saat stabil.",
       "Model MLP: dievaluasi offline dengan confusion matrix dan akurasi per huruf; target rata-rata >=85% pada data uji. Uji di sisi pipeline, terpisah dari UI.",
       "Integrasi browser (MediaPipe + TF.js): diuji manual dengan kamera + mode file; karena MediaPipe butuh browser, pengujian otomatis terbatas; prioritas pada uji manual terstruktur (teman non-coding sebagai QA).",
+      "Pengujian pengguna: minimum diuji oleh teman satu tim (QA manual terstruktur). Bila ada kesempatan (kenalan, teman kampus, komunitas), diuji ke 5-10 pembelajar nyata sebagai best effort untuk bahan laporan; bukan komitmen keras. Hasil pengujian dicatat jujur (apa yang berhasil, apa yang membingungkan).",
       "Tidak ada prior art karena repo greenfield; seam pengujian utama adalah modul logika produk yang murni (tanpa DOM/kamera), sehingga mudah diuji."
     ]},
 
-    {"type": "heading", "level": 2, "text": "6. Out of Scope"},
+    {"type": "heading", "level": 2, "text": "8. Out of Scope"},
     {"type": "bullet_list", "items": [
       "Huruf SIBI J dan Z (dinamis) dan semua gestur dinamis (fase lanjutan opsional).",
       "BISINDO (stretch goal ber-gerbang; butuh validasi komunitas dan waktu; bukan janji MVP).",
@@ -95,7 +118,7 @@
       "Penerjemahan isyarat ke teks secara bebas (hanya pengenalan kosakata terbatas)."
     ]},
 
-    {"type": "heading", "level": 2, "text": "7. Further Notes"},
+    {"type": "heading", "level": 2, "text": "9. Further Notes"},
     {"type": "bullet_list", "items": [
       "Target selesai: MVP kelar di pertemuan 12 (1 bulan sebelum akhir); pertemuan 13-16 untuk QA, laporan, presentasi.",
       "Rencana cadangan: jika telat, kata jadi fase 2 (24 abjad tetap MVP inti).",

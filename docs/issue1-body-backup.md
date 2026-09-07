@@ -46,7 +46,6 @@ Aplikasi web (PWA) untuk belajar **SIBI** dengan pengenalan gestur real-time mel
 - **Stack**: React + Vite. (ADR-0004)
 - **Bahasa target & sumber konten**: SIBI; konten & gambar panduan bersumber dari Kamus SIBI resmi Kemendikbud. (ADR-0002)
 - **Scope MVP**: 24 abjad statis SIBI (A-I, K-Y) + 15-20 kata dasar statis. Huruf J & Z (dinamis) tidak masuk MVP. (ADR-0001)
-- **Kriteria pemilihan 15-20 kata**: kata dasar sehari-hari yang paling relevan untuk komunikasi awal (sapaan, kebutuhan dasar), **dipilih yang gesturnya statis** bila memungkinkan, dan **bersumber dari Kamus SIBI resmi**. Daftar final ditentukan di fase riset (P4) dan dicatat sebagai konten katalog.
 - **Katalog gestur data-driven**: Setiap gestur adalah data {id, label, sistem [SIBI], jumlah_tangan: 1, gambar_panduan, teks_langkah, aturan_geometris?}. Memungkinkan BISINDO (2 tangan) ditambahkan sebagai sistem baru. (ADR-0005)
 - **Arsitektur modular (seam)**: 
   - Modul pengenalan (deteksi + klasifikasi) terisolasi, input frame/gambar, output prediksi kelas + skor keyakinan + landmark.
@@ -62,40 +61,18 @@ Aplikasi web (PWA) untuk belajar **SIBI** dengan pengenalan gestur real-time mel
 - **Pelatihan model**: Python (Keras/TensorFlow) offline; Google Colab cadangan.
 - **Arsitektur multi-sistem**: BISINDO (2 tangan) sebagai stretch goal ber-gerbang, bukan bagian spec ini (lihat ADR-0005).
 
-## 5. Non-Functional Requirements
+## Testing Decisions
 
-- **Browser didukung**: Chrome versi terbaru (dan browser Chromium lain seperti Edge). Target utama adalah kamera + MediaPipe, jadi browser modern diutamakan.
-- **Performa**: aplikasi merespons penilaian dalam <1 detik dari gestur stabil; frame rate kamera tetap halus (≥15 fps di laptop standar) saat mode latihan.
-- **Privasi**: semua proses pengenalan berjalan di perangkat pengguna (client-side); video kamera tidak direkam, tidak dikirim ke server, dan tidak dipersist. Ada indikator jelas saat kamera aktif.
-- **Penanganan error**: saat kamera tidak tersedia / izin ditolak / tidak ada tangan terdeteksi / model gagal dimuat, aplikasi menampilkan pesan ramah yang jelas + opsi lanjut ke mode tanpa kamera (bukan error diam-diam).
-- **Tersedia offline-ish**: mode tanpa kamera memungkinkan pengguna melihat materi & panduan tanpa perlu akses kamera.
-- **Aksesibilitas dasar**: kontras teks memadai untuk pengguna dengan gangguan penglihatan ringan; ukuran font & target sentuh layak di layar HP.
-
-## 6. Risks & Mitigations
-
-| Risiko | Dampak | Mitigasi |
-|---|---|---|
-| Dataset rekam sendiri telat / kurang | Model akurasi rendah, jadwal mundur | Mulai rekam di P5-6 (jalur kritis); target ±100 frame/gestur; gunakan dataset ASL publik untuk prototyping awal |
-| Akurasi model < target 85% | Tidak memenuhi target MVP | Evaluasi dini (P7 gerbang); tambah data untuk huruf yang sering salah; pangkas scope (kata jadi fase 2); sampaikan jujur ke dosen |
-| BISINDO stretch tidak kesampaian | Tidak ada fitur BISINDO di MVP | BISINDO bukan janji (ADR-0005); arsitektur multi-sistem disiapkan; disebut sebagai pengembangan lanjutan di laporan |
-| Jadwal molor dari P12 | MVP tidak siap demo akhir | Rencana cadangan: pangkas kata ke fase 2; nol fitur baru setelah P8; QA & laporan berjalan paralel |
-| Kamera bermasalah saat demo | Demo gagal di hari H | Mode uji dari file gambar + video demo cadangan (T9) |
-| Validasi komunitas Tuli tidak didapat | Konten BISINDO berisiko salah versi | Untuk MVP SIBI tidak wajib (Kamus SIBI resmi); BISINDO hanya dikerjakan bila akses didapat |
-| Salah satu tim tidak bisa lanjut | Beban menumpuk ke satu orang | Konten/riset/dokumentasi dipisah ke non-coding; batas tanggung jawab jelas |
-
-## 7. Testing Decisions
-
-Prinsip: uji perilaku eksternal, bukan detail implementasi.
+Prinsip: uji perilaku eksternal, bukan detail implementasi. Yang baik: memastikan logika produk benar tanpa bergantung pada kamera/model nyata.
 
 - **Modul logika produk** (alur belajar, kuis, mastery, progres): diuji dengan landmark sintetis atau input file yang sudah diketahui. Misal: memberi landmark yang "benar" untuk huruf A → sistem menandai benar; memberi yang salah → menandai salah; setelah 3x benar → mastery tercapai.
 - **Aturan feedback geometris**: diuji per huruf dengan landmark sintetis yang sengaja "salah" pada satu aspek (misal jari bengkok) → sistem memberi saran yang tepat.
 - **Penilaian stabil (N-frame)**: diuji dengan urutan prediksi sintetis (stabil vs berubah-ubah) → sistem hanya mengunci saat stabil.
 - **Model MLP**: dievaluasi offline dengan confusion matrix & akurasi per huruf; target ≥85% rata-rata pada data uji. Ini uji di sisi pipeline, terpisah dari UI.
-- **Integrasi browser (MediaPipe + TF.js)**: diuji manual dengan kamera + mode file; karena MediaPipe butuh browser, pengujian otomatis terbatas; prioritas pada uji manual terstruktur (teman non-coding sebagai QA).
-- **Pengujian pengguna**: minimum diuji oleh teman satu tim (QA manual terstruktur). Bila ada kesempatan (kenalan, teman kampus, komunitas), diuji ke 5-10 pembelajar nyata sebagai **best effort** untuk bahan laporan; bukan komitmen keras. Hasil pengujian dicatat jujur (apa yang berhasil, apa yang membingungkan).
+- **Integrasi browser (MediaPipe + TF.js)**: diuji manual dengan kamera + mode file; karena MediaPipe butuh browser, pengujian otomatisnya terbatas; prioritas pada uji manual terstruktur (teman non-coding sebagai QA).
 - Tidak ada prior art karena repo greenfield; seam pengujian utama adalah modul logika produk yang murni (tanpa DOM/kamera), sehingga mudah diuji.
 
-## 8. Out of Scope
+## Out of Scope
 
 - Huruf SIBI J & Z (dinamis) dan semua gestur dinamis (fase lanjutan opsional).
 - BISINDO (stretch goal ber-gerbang; butuh validasi komunitas & waktu; bukan janji MVP).
@@ -108,10 +85,11 @@ Prinsip: uji perilaku eksternal, bukan detail implementasi.
 - Pengenalan ekspresi wajah / bahasa tubuh (fokus ke tangan).
 - Penerjemahan isyarat → teks secara bebas (hanya pengenalan kosakata terbatas).
 
-## 9. Further Notes
+## Further Notes
 
 - Target selesai: MVP kelar di pertemuan 12 (1 bulan sebelum akhir); P13-16 untuk QA, laporan, presentasi. Lihat `docs/rencana-16-pertemuan.md`.
 - Rencana cadangan: jika telat, kata jadi fase 2 (24 abjad tetap MVP inti).
 - Akses komunitas Tuli untuk validasi = best effort, dibutuhkan hanya untuk stretch BISINDO.
 - Kejujuran akademik: klaim akurasi harus diukur sungguhan dengan confusion matrix; target ≥85% dinyatakan dari awal.
 - Repo masih greenfield: spec ini adalah fondasi; implementasi mengikuti issue tracker (GitHub Issues) setelah spec disetujui.
+
