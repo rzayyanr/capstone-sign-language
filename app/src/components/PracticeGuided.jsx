@@ -138,10 +138,10 @@ export default function PracticeGuided() {
       setHandSeen(false)
       holdStartRef.current = null
       setHoldMs(0)
-      // tangan lepas: bukan "tenang salah" → reset juga akumulasi waktu salah
+      // tangan lepas: bukan "tenang salah" → reset akumulasi waktu salah.
+      // Panel feedback (jika sudah tampil) TETAP: baru hilang saat huruf benar.
       prevLmRef.current = null
       wrongStartRef.current = null
-      setWrongInfo(null)
       s.wrong = 0
       s.miss += 1
       return
@@ -205,9 +205,9 @@ export default function PracticeGuided() {
         if (!still) {
           // Tangan masih bergerak (ancang-ancang) → jangan dihitung salah.
           // Reset akumulasi "tenang salah": gerakan baru = mulai tenang dari nol.
+          // Panel feedback (jika sudah tampil) TETAP sampai huruf benar.
           wrongStartRef.current = null
           s.wrong = 0
-          setWrongInfo(null)
         } else {
           // Tangan TENANG tapi membentuk pola salah: akumulasi waktu salah.
           if (!wrongStartRef.current) wrongStartRef.current = now
