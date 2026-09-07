@@ -4,16 +4,19 @@
 // Fase:
 //   learn   — lihat panduan huruf (gambar, langkah, tips). Kamera MATI.
 //   try     — kamera nyala; user memperagakan huruf target.
-//             Penilaian stabil: perlu N frame berturut-turut dengan
-//             prediksi == target DAN confidence >= ambang, baru "benar".
-//             N frame prediksi salah (bukan target) → "coba lagi".
+//             Lulus = gestur benar ditahan HOLD_MS (5 detik) penuh.
+//             Feedback "belum tepat" hanya muncul setelah tangan
+//             TENANG (motion gate, anti ancang-ancang) dan salah
+//             terus WRONG_MS (3 detik). Saat feedback tampil kamera
+//             TETAP nyala: begitu tangan benar, otomatis lanjut
+//             ke hitungan 5 detik (auto-recover).
 //   success — benar; tombol lanjut ke huruf berikutnya.
 //
 // Grid huruf (A–Y) tersedia untuk lompat/mengulang. Kamera hanya
 // aktif selama fase try; mati otomatis saat kembali ke learn/success.
 // ============================================================
 import { useEffect, useRef, useState } from 'react'
-import { CheckCircle, ArrowRight, ArrowCounterClockwise, Camera, Hand, CircleNotch, VideoCameraSlash, GridFour, XCircle, BookOpenText } from '@phosphor-icons/react'
+import { CheckCircle, ArrowRight, ArrowCounterClockwise, Camera, Hand, CircleNotch, VideoCameraSlash, GridFour, XCircle } from '@phosphor-icons/react'
 import { ABJAD_SIBI } from '../modules/content/gestureCatalog'
 import { loadModel, predictLandmarks } from '../modules/recognition/mlp'
 import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../modules/recognition/camera'
@@ -21,20 +24,24 @@ import { analyze } from '../modules/recognition/geometry'
 
 const STATIC_LETTERS = ABJAD_SIBI.filter((g) => g.kategori === 'abjad')
 const HOLD_MS = 5000 // syarat lulus: gestur benar ditahan 5 detik penuh (waktu nyata)
-const FAIL_FRAMES = 12 // N frame salah berturut-turut (tanpa pernah benar) sebelum "coba lagi"
+const WRONG_MS = 3000 // feedback muncul setelah tangan tenang & salah terus 3 detik
+const MOTION_TOLERANCE = 0.06 // gerakan rata-rata landmark/frame ≤ 6% ukuran tangan = "tenang"
 const CONFIDENCE = 0.5
 
 export default function PracticeGuided() {
-  const [phase, setPhase] = useState('learn') // learn | try | success | wrong
+  const [phase, setPhase] = useState('learn') // learn | try | success
   const [index, setIndex] = useState(0)
   const [gridOpen, setGridOpen] = useState(false)
-  // info saat salah (T6): huruf terdeteksi + saran geometris
-  const [wrongInfo, setWrongInfo] = useState(null) // { detected, tips[] }
+  // info saat salah (T6): huruf terdeteksi + saran geometris (panel di dalam try)
+  const [wrongInfo, setWrongInfo] = useState(null) // null | { detected, tips[] }
   const lastLmRef = useRef(null) // landmark frame terakhir utk analisis geometri
   const lastPredRef = useRef(null) // label prediksi frame terakhir
   // progres tahan 5 detik (0..HOLD_MS) utk UI hitung mundur
   const [holdMs, setHoldMs] = useState(0)
   const holdStartRef = useRef(null) // timestamp kapan streak benar mulai
+  // motion gate (anti ancang-ancang) + akumulasi waktu salah
+  const prevLmRef = useRef(null) // landmark frame sebelumnya utk ukur gerakan
+  const wrongStartRef = useRef(null) // timestamp kapan streak "tenang+salah" mulai
 
   const gesture = STATIC_LETTERS[index]
   const progress = ((index + 1) / STATIC_LETTERS.length) * 100
@@ -64,6 +71,8 @@ export default function PracticeGuided() {
     holdStartRef.current = null
     setHoldMs(0)
     streakRef.current = { wrong: 0, miss: 0 }
+    prevLmRef.current = null
+    wrongStartRef.current = null
   }
 
   // ===== fase try: logika kamera + penilaian =====
@@ -89,6 +98,8 @@ export default function PracticeGuided() {
     setHoldMs(0)
     holdStartRef.current = null
     streakRef.current = { wrong: 0, miss: 0 }
+    prevLmRef.current = null
+    wrongStartRef.current = null
     try {
       await loadModel()
       const tracker = await startCamera({
@@ -127,6 +138,10 @@ export default function PracticeGuided() {
       setHandSeen(false)
       holdStartRef.current = null
       setHoldMs(0)
+      // tangan lepas: bukan "tenang salah" → reset juga akumulasi waktu salah
+      prevLmRef.current = null
+      wrongStartRef.current = null
+      setWrongInfo(null)
       s.wrong = 0
       s.miss += 1
       return
@@ -135,19 +150,38 @@ export default function PracticeGuided() {
     setHandSeen(true)
     s.miss = 0
     try {
+      // oxlint-disable-next-line react/purity -- handleFrame = callback kamera, bukan render
+      const now = performance.now()
+
+      // ---- Motion gate: ukur gerakan tangan antar frame (anti ancang-ancang) ----
+      let motion = 1 // default "bergerak" (belum ada frame pembanding)
+      const prev = prevLmRef.current
+      if (prev) {
+        // ukuran tangan = jarak pergelangan (0) ke ujung jari tengah (12)
+        const sz = Math.hypot(lms[12].x - lms[0].x, lms[12].y - lms[0].y) || 1
+        let sum = 0
+        for (let i = 0; i < 21; i++) {
+          sum += Math.hypot(lms[i].x - prev[i].x, lms[i].y - prev[i].y)
+        }
+        motion = sum / 21 / sz // rata-rata perpindahan landmark relatif ukuran tangan
+      }
+      prevLmRef.current = lms
+      const still = motion <= MOTION_TOLERANCE
+
       const result = predictLandmarks(flat)
       const isTarget = result.label === gesture.label
       // simpan utk analisis feedback (T6)
       lastLmRef.current = lms
       lastPredRef.current = result.label
 
-      // oxlint-disable-next-line react/purity -- handleFrame = callback kamera, bukan render
-      const now = performance.now()
       if (isTarget && result.confidence >= CONFIDENCE) {
-        // benar: lanjutkan/mulai hitungan tahan 5 detik (waktu nyata)
+        // ---- BENAR: reset semua counter salah, lanjutkan hitungan tahan 5 detik ----
+        wrongStartRef.current = null
+        setWrongInfo(null)
+        setJudge('none')
+        s.wrong = 0
         if (!holdStartRef.current) {
           holdStartRef.current = now
-          s.wrong = 0
         }
         const elapsed = now - holdStartRef.current
         if (elapsed >= HOLD_MS) {
@@ -161,30 +195,37 @@ export default function PracticeGuided() {
         } else {
           // bulatkan ke 100ms: nilai sama antar frame → React bailout (tak re-render)
           setHoldMs(Math.floor(elapsed / 100) * 100)
-          s.wrong = 0
         }
       } else {
-        // salah / berubah: reset hitungan tahan, tapi bukan gagal
+        // ---- SALAH / BUKAN TARGET ----
+        // reset hitungan tahan 5 detik (syarat lulus tak terpenuhi)
         holdStartRef.current = null
         setHoldMs(0)
-        s.wrong += 1
-        // hanya jadi "wrong" (feedback) jika salah terus-menerus TANPA pernah benar
-        if (s.wrong >= FAIL_FRAMES) {
-          setJudge('wrong')
-          setWrongCount((c) => c + 1)
-          // Feedback cerdas (T6): tampilkan huruf terdeteksi + saran geometris
-          // + contoh benar. User bisa langsung coba lagi dari sini.
-          trackerRef.current?.stop()
-          trackerRef.current = null
-          setCamStatus('off')
-          const lm = lastLmRef.current
-          const detected = lastPredRef.current || '?'
-          const geo = lm ? analyze(gesture.label, lm) : { tips: [] }
-          setWrongInfo({
-            detected,
-            tips: geo.tips.length ? geo.tips : ['Perhatikan posisi jari pada contoh, lalu coba lagi.'],
-          })
-          setPhase('wrong')
+
+        if (!still) {
+          // Tangan masih bergerak (ancang-ancang) → jangan dihitung salah.
+          // Reset akumulasi "tenang salah": gerakan baru = mulai tenang dari nol.
+          wrongStartRef.current = null
+          s.wrong = 0
+          setWrongInfo(null)
+        } else {
+          // Tangan TENANG tapi membentuk pola salah: akumulasi waktu salah.
+          if (!wrongStartRef.current) wrongStartRef.current = now
+          s.wrong += 1
+          const wrongElapsed = now - wrongStartRef.current
+          // Feedback hanya setelah WRONG_MS (3 dtk) tenang & salah terus-menerus.
+          // Kamera TETAP nyala; panel hilang otomatis begitu tangan benar.
+          if (wrongElapsed >= WRONG_MS && !wrongInfo) {
+            setJudge('wrong')
+            setWrongCount((c) => c + 1)
+            const lm = lastLmRef.current
+            const detected = lastPredRef.current || '?'
+            const geo = lm ? analyze(gesture.label, lm) : { tips: [] }
+            setWrongInfo({
+              detected,
+              tips: geo.tips.length ? geo.tips : ['Perhatikan posisi jari pada contoh, lalu coba lagi.'],
+            })
+          }
         }
       }
     } catch {
@@ -338,52 +379,39 @@ export default function PracticeGuided() {
             )}
           </div>
 
+          {/* Panel feedback "belum tepat" (T6): muncul saat tangan tenang & salah
+              terus 3 detik. Kamera TETAP nyala: begitu tangan benar, panel
+              hilang otomatis dan lanjut ke hitungan 5 detik. */}
+          {wrongInfo && (
+            <div className="try-feedback">
+              <div className="try-feedback-card">
+                <div className="try-feedback-head">
+                  <XCircle size={26} weight="fill" className="try-feedback-icon" />
+                  <div>
+                    <h4>Belum tepat untuk huruf {gesture.label}</h4>
+                    <p>
+                      Terdeteksi sebagai <strong>{wrongInfo.detected}</strong> — coba samakan dengan contoh.
+                    </p>
+                  </div>
+                  <button className="link-btn" onClick={() => setPhase('learn')}>
+                    Lihat panduan
+                  </button>
+                </div>
+                <div className="try-feedback-body">
+                  <img src={gesture.gambar} alt={`Contoh huruf ${gesture.label}`} className="try-feedback-img" />
+                  <ul className="try-feedback-tips">
+                    {wrongInfo.tips.map((t, i) => (
+                      <li key={i}>{t}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* indikator privasi: kamera aktif */}
           <div className="cam-on-indicator">
             <span className="cam-dot" /> Kamera aktif — video diproses di perangkatmu
-          </div>
-        </div>
-      )}
-
-      {/* FASE WRONG (T6): feedback cerdas — huruf terdeteksi + saran geometris + contoh benar */}
-      {phase === 'wrong' && wrongInfo && (
-        <div className="guided-wrong">
-          <div className="wrong-card">
-            <div className="wrong-head">
-              <XCircle size={44} weight="fill" className="wrong-icon" />
-              <div>
-                <h3>Belum tepat untuk huruf {gesture.label}</h3>
-                <p className="wrong-detected">
-                  Terdeteksi sebagai <strong>{wrongInfo.detected}</strong> — hampir! Bandingkan dengan contoh & saran di bawah.
-                </p>
-              </div>
-            </div>
-
-            <div className="wrong-compare">
-              {/* Contoh benar: gambar statis */}
-              <div className="wrong-example">
-                <span className="wrong-example-label">Contoh huruf {gesture.label}</span>
-                <img src={gesture.gambar} alt={`Contoh huruf ${gesture.label}`} className="wrong-example-img" />
-              </div>
-              {/* Saran perbaikan */}
-              <div className="wrong-tips">
-                <span className="wrong-tips-label">Yang perlu diperbaiki</span>
-                <ul>
-                  {wrongInfo.tips.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="wrong-actions">
-              <button className="btn-secondary" onClick={resetToLearn}>
-                <BookOpenText size={18} /> Lihat Panduan
-              </button>
-              <button className="btn-primary" onClick={beginTry}>
-                <Camera size={18} weight="fill" /> Coba Lagi
-              </button>
-            </div>
           </div>
         </div>
       )}
