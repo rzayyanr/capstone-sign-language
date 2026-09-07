@@ -1,6 +1,13 @@
 // ============================================================
 // Kamera + MediaPipe HandLandmarker + loop prediksi (T4)
 // Pipeline: webcam frame → 21 landmark (x,y,z) → mlp.js → label + conf
+//
+// CATATAN PERBAIKAN (bug pindah mode / kamera nyala terus):
+// Setiap panggilan startCamera() kini membuat INSTANCE sendiri:
+// videoEl, rafId, lastVideoTime lokal di closure → stop() dari satu
+// komponen TIDAK bisa membunuh stream/loop milik komponen lain.
+// Hanya handLandmarker yang di-cache global (memang mau dibagi,
+// loading model sekali saja).
 // ============================================================
 
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision'
@@ -12,9 +19,6 @@ const WASM_URL = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/was
 const MODEL_URL = `${import.meta.env.BASE_URL}models/hand_landmarker.task`
 
 let handLandmarker = null
-let videoEl = null
-let rafId = null
-let lastVideoTime = -1
 
 /**
  * Siapkan & mulai kamera + landmarker.
@@ -24,7 +28,7 @@ let lastVideoTime = -1
 export async function startCamera(opts) {
   const { video, onFrame, onStatus, onError } = opts
 
-  // 1. Inisialisasi HandLandmarker (sekali saja)
+  // 1. Inisialisasi HandLandmarker (sekali saja, dibagi semua pemakai)
   if (!handLandmarker) {
     onStatus?.('Memuat model MediaPipe...')
     try {
@@ -44,13 +48,12 @@ export async function startCamera(opts) {
   }
 
   // 2. Akses webcam
+  let stream
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
+    stream = await navigator.mediaDevices.getUserMedia({
       video: { width: { ideal: VIDEO_WIDTH }, height: { ideal: VIDEO_HEIGHT }, facingMode: 'user' },
       audio: false,
     })
-    video.srcObject = stream
-    videoEl = video
   } catch (e) {
     onError?.(
       e?.name === 'NotAllowedError'
@@ -62,13 +65,27 @@ export async function startCamera(opts) {
     throw e
   }
 
+  // Lepas stream lama yang masih menempel di <video> ini (jika ada),
+  // supaya start ganda tidak membocorkan stream kamera.
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach((t) => t.stop())
+    video.srcObject = null
+  }
+  video.srcObject = stream
+
   await new Promise((resolve) => {
     video.onloadedmetadata = () => resolve()
   })
   await video.play()
 
-  // 3. Loop deteksi tiap frame (requestVideoFrameCallback jika ada, fallback rAF)
+  // 3. Loop deteksi — state loop LOKAL (bukan global) supaya tiap instance
+  //    independen & bisa dihentikan sendiri tanpa memengaruhi instance lain.
+  let rafId = null
+  let lastVideoTime = -1
+  let stopped = false
+
   const processFrame = () => {
+    if (stopped) return
     if (!handLandmarker || video.readyState < 2) {
       rafId = requestAnimationFrame(processFrame)
       return
@@ -98,11 +115,13 @@ export async function startCamera(opts) {
 
   return {
     stop() {
+      if (stopped) return // jangan dobel-stop
+      stopped = true
       if (rafId) cancelAnimationFrame(rafId)
       rafId = null
-      if (videoEl?.srcObject) {
-        videoEl.srcObject.getTracks().forEach((t) => t.stop())
-        videoEl.srcObject = null
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach((t) => t.stop())
+        video.srcObject = null
       }
       lastVideoTime = -1
     },
