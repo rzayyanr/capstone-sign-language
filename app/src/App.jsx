@@ -33,28 +33,70 @@ function App() {
         {page === 'beranda' && (
           <>
             <section className="hero">
-              <h1>Belajar SIBI jadi menyenangkan.</h1>
+              <h1>Kenalan dulu dengan bahasa isyarat.</h1>
               <p className="tagline">
-                Isyarat: aplikasi belajar bahasa isyarat Indonesia (SIBI) dengan
-                pengenalan gestur real-time. Temanmu bisa diajak bicara, bukan
-                cuma ditatap.
+                Isyarat adalah aplikasi untuk belajar SIBI, bahasa isyarat
+                resmi Indonesia. Dibuat supaya kamu bisa ngobrol langsung
+                dengan teman Tuli, bukan cuma lewat tulisan.
               </p>
               <button className="btn-primary" onClick={() => setPage('abjad')}>
                 Mulai dari huruf A
               </button>
             </section>
-            <section className="card">
-              <h2>Pilih huruf</h2>
-              <div className="letter-grid">
-                {huruf.slice(0, 24).map((g) => (
-                  <button key={g.id} className="letter-tile">
-                    {g.label}
-                  </button>
-                ))}
+
+            <section className="intro-grid">
+              <div className="card intro-card">
+                <h2>Apa itu bahasa isyarat?</h2>
+                <p>
+                  Bahasa isyarat adalah cara berkomunikasi memakai tangan,
+                  ekspresi wajah, dan gerak tubuh. Ini bahasa sehari-hari
+                  teman-teman Tuli, sama seperti bahasa lisan bagi kita.
+                </p>
               </div>
-              <p className="placeholder-note">
-                24 abjad statis SIBI (A-I, K-Y). Belajar huruf per huruf.
-              </p>
+              <div className="card intro-card">
+                <h2>Kenapa belajar?</h2>
+                <p>
+                  Supaya teman Tuli tidak perlu selalu menulis atau memakai
+                  perantara untuk bicara denganmu. Sedikit usaha belajarmu
+                  berarti besar buat mereka.
+                </p>
+              </div>
+              <div className="card intro-card">
+                <h2>Apa itu SIBI?</h2>
+                <p>
+                  SIBI (Sistem Isyarat Bahasa Indonesia) adalah sistem isyarat
+                  resmi yang dibakukan pemerintah dan dipakai di sekolah luar
+                  biasa. Isyaratnya satu tangan dan ada kamus resminya, jadi
+                  enak dipelajari bertahap.
+                </p>
+              </div>
+            </section>
+
+            <section className="card">
+              <h2>Cara pakainya gampang</h2>
+              <ol className="steps">
+                <li>
+                  <span className="step-num">1</span>
+                  <span>
+                    <strong>Pilih huruf atau kata</strong> yang mau dipelajari
+                    dari katalog.
+                  </span>
+                </li>
+                <li>
+                  <span className="step-num">2</span>
+                  <span>
+                    <strong>Tirukan gerakannya</strong> mengikuti panduan
+                    gambar dan langkah.
+                  </span>
+                </li>
+                <li>
+                  <span className="step-num">3</span>
+                  <span>
+                    <strong>Dinilai kamera</strong>: aplikasi memberi tahu
+                    benar atau salah, plus saran perbaikannya.
+                  </span>
+                </li>
+              </ol>
             </section>
           </>
         )}

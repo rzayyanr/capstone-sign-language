@@ -6,6 +6,8 @@
   --paper: #fbf6ee;
   --surface: #ffffff;
   --ink: #2e2a24;
+  --ink-muted: #5c554a;
+  --ink-soft: #8a8174;
   --primary: #0e7a6c;
   --primary-deep: #0a5e54;
   --primary-soft: #e3f1ef;
@@ -59,4 +61,10 @@ h1, h2, h3, h4 {
 button {
   font-family: var(--font-body);
   cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--highlight);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
 }

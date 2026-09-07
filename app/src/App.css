@@ -45,7 +45,7 @@
 .nav-btn {
   border: none;
   background: transparent;
-  color: var(--ink);
+  color: var(--ink-muted);
   font-weight: 700;
   font-size: 0.85rem;
   padding: 8px 14px;
@@ -55,7 +55,8 @@
 }
 
 .nav-btn:hover {
-  background: rgba(14, 122, 108, 0.08);
+  background: rgba(14, 122, 108, 0.1);
+  color: var(--primary-deep);
 }
 
 .nav-btn.active {
@@ -78,20 +79,23 @@ main {
 /* Hero */
 .hero {
   text-align: left;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
 .hero h1 {
-  font-size: 1.9rem;
-  line-height: 1.15;
+  font-size: 2.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
   color: var(--ink);
+  max-width: 14ch;
 }
 
 .hero .tagline {
-  color: #6b6258;
-  margin-top: var(--space-xs);
-  margin-bottom: var(--space-md);
-  font-size: 1rem;
+  color: var(--ink-muted);
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  font-size: 1.05rem;
+  max-width: 42ch;
 }
 
 /* Tombol */
@@ -142,16 +146,69 @@ main {
 
 /* Statistik & info */
 .placeholder-note {
-  color: #8a8178;
+  color: var(--ink-soft);
   font-size: 0.9rem;
   background: var(--paper);
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
 }
 
+/* Kartu pengenalan di Beranda */
+.intro-grid {
+  display: grid;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.intro-card {
+  border-left: 5px solid var(--primary);
+}
+
+.intro-card h2 {
+  font-size: 1.2rem;
+  color: var(--primary-deep);
+  margin-bottom: var(--space-xs);
+}
+
+.intro-card p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  max-width: 65ch;
+}
+
+/* Langkah-langkah "cara pakai" */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-md);
+}
+
+.steps li {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.step-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .footer {
   text-align: center;
-  color: #8a8178;
+  color: var(--ink-soft);
   font-size: 0.8rem;
   margin-top: var(--space-xl);
   padding-top: var(--space-md);

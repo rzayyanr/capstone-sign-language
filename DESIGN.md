@@ -6,6 +6,8 @@ colors:
   paper: "#FBF6EE"
   surface: "#FFFFFF"
   ink: "#2E2A24"
+  ink-muted: "#5C554A"
+  ink-soft: "#8A8174"
   primary: "#0E7A6C"
   primary-deep: "#0A5E54"
   primary-soft: "#E3F1EF"
@@ -78,6 +80,8 @@ Metafora visualnya adalah kartu flashcard edukatif yang menyenangkan: bidang kre
 - **paper (#FBF6EE):** latar utama. Krem hangat seperti kertas, lebih ramah daripada putih telanjang dan tidak menyilaukan saat dipakai berlama-lama.
 - **surface (#FFFFFF):** permukaan kartu dan panel. Putih bersih di atas krem memberi kedalaman tanpa bayangan berat.
 - **ink (#2E2A24):** teks utama. Cokelat gelap hangat, lebih lembut daripada hitam pekat.
+- **ink-muted (#5C554A):** teks sekunder (tagline, isi kartu). Netral hangat, bukan abu-abu dingin.
+- **ink-soft (#8A8174):** teks tersier (catatan, footer). Paling redup namun tetap kontras di atas krem.
 - **primary (#0E7A6C):** teal tua. Warna aksi utama (tombol, tautan, elemen aktif). Memberi kesan tenang dan kompeten, sekaligus membedakan dari aplikasi belajar lain yang didominasi hijau atau oranye.
 - **primary-deep (#0A5E54):** teal lebih gelap untuk keadaan hover/tekan.
 - **primary-soft (#E3F1EF):** latar lembut untuk pil navigasi aktif, kartu huruf, dan area sorotan.
@@ -92,7 +96,7 @@ Dua keluarga huruf yang jelas berbeda perannya:
 - **Baloo 2** untuk logo, judul, dan angka besar. Bulat dan ceria, membawa karakter "edukasi yang menyenangkan". Dipakai dengan takaran (judul dan angka saja), bukan untuk paragraf panjang.
 - **Nunito Sans** untuk isi, label, dan tombol. Ramah dan sangat terbaca di layar kecil, termasuk untuk teks panjang.
 
-Ukuran dasar isi 1rem dengan tinggi baris 1.6. Label memakai bobot 800 dengan jarak huruf sedikit renggang agar terlihat seperti keterangan kartu yang rapi.
+Judul hero (h1) memakai Baloo 2 2.5rem dengan letter-spacing sedikit rapat (-0.01em) dan lebar maksimal ~14 karakter agar berdampak. Tagline dibatasi ~42 karakter per baris. Paragraf isi dibatasi 65 karakter untuk kenyamanan baca.
 
 ## Layout & Spacing
 
