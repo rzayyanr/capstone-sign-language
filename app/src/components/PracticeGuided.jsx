@@ -21,6 +21,7 @@ import { ABJAD_SIBI } from '../modules/content/gestureCatalog'
 import { loadModel, predictLandmarks } from '../modules/recognition/mlp'
 import { startCamera, drawLandmarks, VIDEO_WIDTH, VIDEO_HEIGHT } from '../modules/recognition/camera'
 import { analyze } from '../modules/recognition/geometry'
+import { recordSuccess } from '../modules/progress'
 
 const STATIC_LETTERS = ABJAD_SIBI.filter((g) => g.kategori === 'abjad')
 const HOLD_MS = 5000 // syarat lulus: gestur benar ditahan 5 detik penuh (waktu nyata)
@@ -192,6 +193,10 @@ export default function PracticeGuided() {
           trackerRef.current?.stop()
           trackerRef.current = null
           setCamStatus('off')
+          // T8: catat keberhasilan (hanya huruf abjad)
+          if (gesture.kategori === 'abjad') {
+            recordSuccess(gesture.label)
+          }
         } else {
           // bulatkan ke 100ms: nilai sama antar frame → React bailout (tak re-render)
           setHoldMs(Math.floor(elapsed / 100) * 100)

@@ -10,10 +10,10 @@ import {
   Target,
   Lightbulb,
   BookOpen,
-  ChartBar,
 } from '@phosphor-icons/react'
 import HeroArt from './components/HeroArt'
 import GestureDetailModal from './components/GestureDetailModal'
+import ProgressPage from './components/ProgressPage'
 import './App.css'
 
 // PracticePage dimuat lazy: @mediapipe/tasks-vision (~500 kB) hanya diunduh
@@ -322,19 +322,8 @@ function App() {
           </Suspense>
         )}
 
-        {/* HALAMAN 5: PROGRES (PLACEHOLDER T8) */}
-        {page === 'progres' && (
-          <section className="card placeholder-card">
-            <h2>Statistik & Penguasaan</h2>
-            <p>
-              Riwayat penguasaan gestur yang tersimpan lokal di browser kamu (Ticket T8).
-            </p>
-            <div className="feature-preview-box">
-              <ChartBar className="preview-icon" weight="duotone" size={44} />
-              <p>Mencatat huruf mana saja yang sudah berhasil diperagakan 3x berturut-turut.</p>
-            </div>
-          </section>
-        )}
+        {/* HALAMAN 5: PROGRES (T8) */}
+        {page === 'progres' && <ProgressPage onOpenGesture={handleOpenGesture} />}
       </main>
 
       {/* MODAL DETAIL GESTUR */}
