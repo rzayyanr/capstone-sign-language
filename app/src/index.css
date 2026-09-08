@@ -32,9 +32,13 @@
   --space-lg: 24px;
   --space-xl: 32px;
 
-  /* elevation */
-  --shadow-card: 0 1px 2px rgba(46, 42, 36, 0.06), 0 0 0 1px rgba(46, 42, 36, 0.04);
-  --shadow-lift: 0 8px 20px rgba(46, 42, 36, 0.1);
+  /* elevation — Airbnb-inspired 3-layer warm shadow */
+  --shadow-card: 0 0 0 1px rgba(46, 42, 36, 0.04),
+                 0 2px 6px rgba(46, 42, 36, 0.05),
+                 0 4px 12px rgba(46, 42, 36, 0.08);
+  --shadow-lift: 0 0 0 1px rgba(46, 42, 36, 0.06),
+                 0 4px 12px rgba(46, 42, 36, 0.08),
+                 0 12px 28px rgba(46, 42, 36, 0.14);
 
   /* panel warna Duolingo-hangat (soft, untuk kartu besar) */
   --panel-mint: #dfefec;
@@ -64,6 +68,7 @@ body {
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 button {

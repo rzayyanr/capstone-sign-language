@@ -57,13 +57,26 @@
 .nav-btn {
   border: none;
   background: transparent;
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: var(--radius-pill);
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--ink-muted);
-  transition: all 0.15s ease;
+  transition: color 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 0;
+  height: 2.5px;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.25s ease, left 0.25s ease;
 }
 
 .nav-btn:hover {
@@ -75,6 +88,12 @@
   background: var(--primary);
   color: #fff;
   box-shadow: 0 3px 0 var(--primary-deep);
+}
+
+.nav-btn.active::after {
+  width: 60%;
+  left: 20%;
+  background: #fff;
 }
 
 /* ---------- Chip streak & XP (gaya Duolingo) ---------- */
@@ -240,8 +259,8 @@
   font-family: var(--font-body);
   font-weight: 800;
   font-size: 1.05rem;
-  padding: 14px 28px;
-  border-radius: 16px;
+  padding: 16px 32px;
+  border-radius: 20px;
   box-shadow: 0 4px 0 var(--primary-deep);
   cursor: pointer;
   transition: transform 0.08s ease, box-shadow 0.08s ease;
@@ -271,7 +290,7 @@
   font-weight: 800;
   font-size: 1.05rem;
   padding: 12px 26px; /* 2px border → padding 12px agar tinggi total = 14px+2px primary */
-  border-radius: 16px;
+  border-radius: 20px;
   cursor: pointer;
   transition: transform 0.08s ease, background 0.15s ease, box-shadow 0.08s ease;
 }
@@ -304,26 +323,26 @@
 .module-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
+  gap: var(--space-lg);
+  margin: var(--space-xl) 0;
 }
 
 .module-card {
   border: none;
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg) var(--space-md);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg) var(--space-lg);
   text-align: left;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   font-family: var(--font-body);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .module-card:hover {
-  transform: translateY(-3px);
-  filter: drop-shadow(0 10px 8px rgba(46, 42, 36, 0.12));
+  transform: translateY(-4px);
+  filter: drop-shadow(0 12px 10px rgba(46, 42, 36, 0.13));
 }
 .module-card:active {
   transform: translateY(1px);
@@ -331,9 +350,17 @@
 }
 
 .module-card .module-emoji {
-  font-size: 2rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 6px rgba(46, 42, 36, 0.08);
   margin-bottom: 4px;
+  font-size: 1.6rem;
+  line-height: 1;
   color: var(--primary);
 }
 
@@ -381,10 +408,10 @@
 /* ---------- Kartu & Section umum ---------- */
 .card {
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
   padding: var(--space-lg);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
 .card h2 {
@@ -461,22 +488,35 @@
 .intro-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
 .intro-card {
   margin-bottom: 0;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
-  padding: var(--space-md);
+  padding: var(--space-lg);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.intro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
 }
 
 .intro-card .intro-icon {
-  font-size: 1.6rem;
-  line-height: 1;
-  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary-soft);
   color: var(--primary);
+  font-size: 1.3rem;
+  line-height: 1;
+  margin-bottom: 12px;
 }
 
 .intro-card h2 {
@@ -561,18 +601,18 @@
 
 .catalog-card {
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
   border: none;
   text-align: left;
   padding: 0;
 }
 
 .catalog-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lift);
 }
 
@@ -595,7 +635,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 10px 16px;
 }
 
 .catalog-card-letter {
@@ -1021,9 +1061,11 @@
 /* ---------- Footer ---------- */
 .footer {
   text-align: center;
-  padding: var(--space-lg) 0 var(--space-sm);
+  padding: var(--space-xl) 0 var(--space-lg);
   color: var(--ink-soft);
   font-size: 0.85rem;
+  border-top: 1px solid rgba(46, 42, 36, 0.08);
+  margin-top: var(--space-xl);
 }
 
 /* ---------- Responsive ---------- */
