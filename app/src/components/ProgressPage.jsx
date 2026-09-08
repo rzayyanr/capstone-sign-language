@@ -11,9 +11,10 @@
 // listener) sehingga halaman ini segar setiap kali dikunjungi.
 // ============================================================
 import { useState, useEffect, useMemo } from 'react'
-import { ChartBar, CheckCircle, Trash, Medal, TrendUp } from '@phosphor-icons/react'
+import { ChartBar, CheckCircle, Trash, Medal, TrendUp, Flame, Lightning } from '@phosphor-icons/react'
 import { ABJAD_SIBI } from '../modules/content/gestureCatalog'
 import { getSummary, resetProgress, subscribeProgress, MASTERY_STREAK } from '../modules/progress'
+import { getGamification, subscribeGamification } from '../modules/gamification'
 
 export default function ProgressPage({ onOpenGesture }) {
   const [, setTick] = useState(0) // dipakai utk memicu re-render saat data berubah
@@ -24,11 +25,16 @@ export default function ProgressPage({ onOpenGesture }) {
   // Segarkan saat data progres berubah (dari mode lain) / saat halaman dibuka
   useEffect(() => {
     const unsub = subscribeProgress(() => setTick((t) => t + 1))
-    return unsub
+    const unsubG = subscribeGamification(() => setTick((t) => t + 1))
+    return () => {
+      unsub()
+      unsubG()
+    }
   }, [])
 
   // getSummary dihitung tiap render; data kecil & murah, dan tick memicu re-render
   const summary = getSummary(letters)
+  const gami = getGamification()
   const masteredCount = summary.mastered
   const pct = Math.round((masteredCount / letters.length) * 100)
 
@@ -52,17 +58,39 @@ export default function ProgressPage({ onOpenGesture }) {
         </p>
       </div>
 
-      {/* RINGKASAN */}
+      {/* KARTU STATISTIK GAMIFIKASI (3D ala Duolingo) */}
+      <div className="stat-cards">
+        <div className="stat-card stat-streak">
+          <span className="stat-icon">
+            <Flame weight="fill" />
+          </span>
+          <span className="stat-num">{gami.streak}</span>
+          <span className="stat-label">Streak hari</span>
+        </div>
+        <div className="stat-card stat-xp">
+          <span className="stat-icon">
+            <Lightning weight="fill" />
+          </span>
+          <span className="stat-num">{gami.xp}</span>
+          <span className="stat-label">Total XP</span>
+        </div>
+        <div className="stat-card stat-mastered">
+          <span className="stat-icon">
+            <Medal weight="fill" />
+          </span>
+          <span className="stat-num">{masteredCount}</span>
+          <span className="stat-label">Huruf dikuasai</span>
+        </div>
+      </div>
+
+      {/* RINGKASAN PROGRES BAR */}
       <div className="card progress-summary-card">
         <div className="progress-summary-top">
           <div className="progress-summary-num">
             <strong>{masteredCount}</strong>
             <span>/ {letters.length} huruf dikuasai</span>
           </div>
-          <div className="progress-summary-badge">
-            <Medal size={20} weight="fill" />
-            {pct}%
-          </div>
+          <span className="progress-summary-pct">{pct}%</span>
         </div>
         <div className="progress-bar-track">
           <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
